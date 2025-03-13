@@ -7,11 +7,37 @@ let connectionInterval = null;
 // Initialize Solana connection
 async function initializeSolana() {
     try {
+        // Check if window.solana exists
+        if (!window.solana) {
+            console.warn("🔴 Solana object not found. Please install Phantom wallet.");
+            return;
+        }
+
+        // Initialize connection
         solanaConnection = new solana.Connection("https://api.mainnet-beta.solana.com");
         console.log("✅ Solana connection initialized");
+
+        // Check if already connected
+        if (window.solana.isConnected) {
+            await autoConnectWallet();
+        }
     } catch (error) {
         console.error("❌ Failed to initialize Solana connection:", error);
         showError("Failed to initialize Solana connection. Please refresh the page.");
+    }
+}
+
+// Auto-connect if wallet is already authorized
+async function autoConnectWallet() {
+    try {
+        const resp = await window.solana.connect({ onlyIfTrusted: true });
+        walletAddress = resp.publicKey.toString();
+        walletConnected = true;
+        await updateBalance();
+        connectionInterval = setInterval(updateBalance, 30000);
+        console.log("✅ Wallet auto-connected:", walletAddress);
+    } catch (error) {
+        console.log("Info: Not auto-connecting wallet:", error.message);
     }
 }
 
@@ -31,19 +57,22 @@ function showError(message) {
 
 // Update wallet button with balance
 async function updateWalletButton(balance) {
-    const walletButton = document.querySelector('.wallet-button');
-    const walletText = walletButton.querySelector('.wallet-text');
+    const walletButtons = document.querySelectorAll('.wallet-button');
     
-    if (!walletButton || !walletText) return;
-    
-    if (walletConnected && balance !== null) {
-        const formattedBalance = (balance / solana.LAMPORTS_PER_SOL).toFixed(4);
-        walletText.textContent = `${formattedBalance} SOL`;
-        walletButton.classList.add('connected');
-    } else {
-        walletText.textContent = 'Connect Wallet';
-        walletButton.classList.remove('connected');
-    }
+    walletButtons.forEach(walletButton => {
+        const walletText = walletButton.querySelector('.wallet-text');
+        
+        if (!walletText) return;
+        
+        if (walletConnected && balance !== null) {
+            const formattedBalance = (balance / solana.LAMPORTS_PER_SOL).toFixed(4);
+            walletText.textContent = `${formattedBalance} SOL`;
+            walletButton.classList.add('connected');
+        } else {
+            walletText.textContent = 'Connect Wallet';
+            walletButton.classList.remove('connected');
+        }
+    });
 }
 
 // Fetch and update SOL balance
@@ -62,9 +91,8 @@ async function updateBalance() {
 // Disconnect wallet
 async function disconnectWallet() {
     try {
-        const { solana } = window;
-        if (solana && solana.isConnected) {
-            await solana.disconnect();
+        if (window.solana && window.solana.isConnected) {
+            await window.solana.disconnect();
         }
         
         walletConnected = false;
@@ -85,13 +113,12 @@ async function disconnectWallet() {
 // Connect wallet
 async function connectWallet() {
     try {
-        const { solana } = window;
-        
-        if (!solana) {
-            throw new Error("No Solana object found! Please install Phantom wallet.");
+        // Check if Phantom is installed
+        if (!window.solana) {
+            throw new Error("Please install Phantom wallet!");
         }
 
-        if (!solana.isPhantom) {
+        if (!window.solana.isPhantom) {
             throw new Error("Please install Phantom wallet!");
         }
 
@@ -102,7 +129,7 @@ async function connectWallet() {
         }
 
         // Connect to wallet
-        const response = await solana.connect();
+        const response = await window.solana.connect();
         walletAddress = response.publicKey.toString();
         walletConnected = true;
 
@@ -131,11 +158,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Initialize Solana connection
     await initializeSolana();
 
-    // Add click handler to wallet button
-    const walletButton = document.querySelector('.wallet-button');
-    if (walletButton) {
-        walletButton.addEventListener('click', connectWallet);
-    }
+    // Add click handler to all wallet buttons
+    const walletButtons = document.querySelectorAll('.wallet-button');
+    walletButtons.forEach(button => {
+        button.addEventListener('click', connectWallet);
+    });
 
     // Add click handler to Phantom wallet option in overlay
     const connectPhantomBtn = document.getElementById('connect-phantom');
@@ -143,17 +170,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         connectPhantomBtn.addEventListener('click', connectWallet);
     }
 
-    // Check if wallet was previously connected
-    const { solana } = window;
-    if (solana && solana.isPhantom && solana.isConnected) {
-        try {
-            const response = await solana.connect({ onlyIfTrusted: true });
-            walletAddress = response.publicKey.toString();
-            walletConnected = true;
-            await updateBalance();
-            connectionInterval = setInterval(updateBalance, 30000);
-        } catch (error) {
-            console.error("❌ Failed to reconnect wallet:", error);
-        }
+    // Add click handler to skip wallet button
+    const skipWalletBtn = document.getElementById('skip-wallet');
+    if (skipWalletBtn) {
+        skipWalletBtn.addEventListener('click', () => {
+            const walletOverlay = document.getElementById('wallet-overlay');
+            if (walletOverlay) {
+                walletOverlay.classList.add('hidden');
+            }
+        });
     }
 }); 
