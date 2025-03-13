@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Methachu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-container">
+                <div class="logo-square">
+                    <div class="pikachu-ears">
+                        <div class="ear left"></div>
+                        <div class="ear right"></div>
+                    </div>
+                    <div class="pikachu-face">
+                        <div class="eyes">
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                        </div>
+                        <div class="cheeks">
+                            <div class="cheek left"></div>
+                            <div class="cheek right"></div>
+                        </div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+            <span class="logo-text">Metachu AI</span>
+        </div>
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#documentation">Documentation</a></li>
+                <li><a href="#deployed-tokens">Deployed Tokens</a></li>
+            </ul>
+            <div class="social-icons">
+                <a href="#" class="social-icon">
+                    <i class="fa-brands fa-x-twitter"></i>
+                </a>
+                <a href="#" class="social-icon">
+                    <i class="fa-brands fa-telegram"></i>
+                </a>
+            </div>
+            <button id="connectWallet" class="wallet-button">
+                <span class="wallet-text">Connect Wallet</span>
+            </button>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="animate-text">Welcome to Metachu AI!</h1>
+            <p class="animate-text-delay">Your AI-Powered Token Deployment Platform</p>
+            <div class="hero-features">
+                <span class="feature-tag">ERC-20</span>
+                <span class="feature-tag">ERC-721</span>
+                <span class="feature-tag">ERC-1155</span>
+                <span class="feature-tag">Custom Tokens</span>
+            </div>
+            <button class="cta-button">Deploy Your Token</button>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Token Deployment Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Security First</h3>
+                    <ul class="feature-list">
+                        <li>Automated Audit Checks</li>
+                        <li>Reentrancy Protection</li>
+                        <li>Overflow Prevention</li>
+                        <li>Access Control</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Token Features</h3>
+                    <ul class="feature-list">
+                        <li>Mintable/Burnable</li>
+                        <li>Pausable Functions</li>
+                        <li>Transfer Limits</li>
+                        <li>Liquidity Locks</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Capabilities</h3>
+                    <ul class="feature-list">
+                        <li>Smart Contract Generation</li>
+                        <li>Market Trend Analysis</li>
+                        <li>Gas Optimization</li>
+                        <li>Risk Assessment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="market-stats" class="market-stats">
+        <div class="container">
+            <h2>Live Market Statistics</h2>
+            <div class="stats-container">
+                <div class="market-card">
+                    <h3>Gas Tracker</h3>
+                    <div class="gas-stats">
+                        <div class="gas-item">
+                            <span class="label">Low</span>
+                            <span class="value" id="gas-low">-- Gwei</span>
+                        </div>
+                        <div class="gas-item">
+                            <span class="label">Average</span>
+                            <span class="value" id="gas-avg">-- Gwei</span>
+                        </div>
+                        <div class="gas-item">
+                            <span class="label">High</span>
+                            <span class="value" id="gas-high">-- Gwei</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="market-card">
+                    <h3>Network Status</h3>
+                    <div class="network-stats">
+                        <div class="stat-row">
+                            <span class="label">ETH Price</span>
+                            <span class="value" id="eth-price">$--</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="label">Block Number</span>
+                            <span class="value" id="block-number">#--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="deployment-steps" class="deployment-steps">
+        <div class="container">
+            <h2>Token Deployment Process</h2>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Connect Wallet</h3>
+                    <p>Connect your MetaMask or other Web3 wallet to get started</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Configure Token</h3>
+                    <p>Set name, symbol, supply, and advanced features</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>AI Analysis</h3>
+                    <p>Our AI reviews and optimizes your token configuration</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Deploy</h3>
+                    <p>One-click deployment to your chosen network</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about-us" class="about-us">
+        <div class="container">
+            <h2>Our Powers</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Electric Innovation</h3>
+                    <p>Sparking creative solutions for your needs</p>
+                </div>
+                <div class="about-card">
+                    <h3>Thunder Quality</h3>
+                    <p>Striking excellence in every project</p>
+                </div>
+                <div class="about-card">
+                    <h3>Lightning Speed</h3>
+                    <p>Fast and powerful delivery</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html> 
