@@ -1,236 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - Harvest AI</title>
+    <title>Documentation - Harvest AI KOL Tweet Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="logo">
-            <a href="index.html" class="logo-link">
-                <div class="logo-container">
-                    <div class="logo-square">
-                        <div class="pikachu-ears">
-                            <div class="ear left"></div>
-                            <div class="ear right"></div>
-                        </div>
-                        <div class="pikachu-face">
-                            <div class="eyes">
-                                <div class="eye left"></div>
-                                <div class="eye right"></div>
-                            </div>
-                            <div class="cheeks">
-                                <div class="cheek left"></div>
-                                <div class="cheek right"></div>
-                            </div>
-                            <div class="mouth"></div>
-                        </div>
-                    </div>
-                </div>
-                <span class="logo-text">Metachu AI</span>
-            </a>
+        <div class="nav-brand">
+            <img src="assets/logo.png" alt="Harvest AI Logo" class="logo">
+            <span>Harvest AI</span>
         </div>
-        <div class="nav-container">
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#quick-start">Quick Start</a></li>
-                <li><a href="#api-reference">API Reference</a></li>
-            </ul>
-            <div class="social-icons">
-                <a href="#" class="social-icon">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="#" class="social-icon">
-                    <i class="fa-brands fa-telegram"></i>
-                </a>
+        <div class="nav-links">
+            <a href="index.html">Dashboard</a>
+            <a href="index.html#kol-list">KOL List</a>
+            <a href="documentation.html" class="active">Documentation</a>
+            <a href="index.html#settings">Settings</a>
+        </div>
+        <div class="nav-right">
+            <div class="theme-switch-wrapper">
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox">
+                    <div class="slider">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </label>
             </div>
-            <button id="connectWallet" class="wallet-button">
-                <span class="wallet-text">Connect Wallet</span>
+            <button class="wallet-button">
+                <i class="fas fa-wallet"></i>
+                <span>Connect Wallet</span>
             </button>
         </div>
     </nav>
 
     <!-- Documentation Header -->
-    <section class="doc-header">
-        <div class="container">
-            <h1>Documentation</h1>
-            <p>Harvest AI is an advanced agricultural intelligence platform that combines artificial intelligence with precision farming technology. Our platform simplifies the process of crop monitoring, weather prediction, and harvest optimization while ensuring maximum yield and efficiency.</p>
-            <div class="doc-search">
-                <input type="text" placeholder="Search documentation..." id="docSearch">
-                <i class="fas fa-search"></i>
-            </div>
-        </div>
-    </section>
+    <header class="doc-header">
+        <h1>Documentation</h1>
+        <p class="doc-subtitle">Learn how to use Harvest AI KOL Tweet Tracker to maximize your trading potential</p>
+    </header>
 
     <!-- Documentation Content -->
-    <section class="documentation">
-        <div class="container">
-            <!-- Table of Contents -->
-            <div class="doc-sidebar">
-                <div class="toc">
-                    <h3>Contents</h3>
-                    <ul>
-                        <li><a href="#introduction">Introduction</a></li>
-                        <li><a href="#getting-started">Getting Started</a></li>
-                        <li><a href="#platform-features">Platform Features</a></li>
-                        <li><a href="#token-configuration">Token Configuration</a></li>
-                        <li><a href="#ai-assistant">AI Assistant</a></li>
-                        <li><a href="#market-statistics">Market Statistics</a></li>
-                        <li><a href="#best-practices">Best Practices</a></li>
+    <main class="documentation">
+        <div class="documentation-grid">
+            <!-- Getting Started Card -->
+            <div class="doc-card">
+                <div class="doc-card-header">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Getting Started</h3>
+                </div>
+                <div class="doc-section">
+                    <h4>What is Harvest AI?</h4>
+                    <p>Harvest AI is an advanced KOL Tweet tracking platform that uses artificial intelligence to analyze and predict market movements based on influential crypto personalities' social media activity.</p>
+                </div>
+                <div class="doc-section">
+                    <h4>Quick Start Guide</h4>
+                    <ul class="doc-list">
+                        <li>Connect your wallet to access all features</li>
+                        <li>Browse the KOL list to select influencers</li>
+                        <li>Set up notifications for tweet alerts</li>
+                        <li>Configure your trading preferences</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Main Documentation Content -->
-            <div class="docs-container">
-                <!-- Introduction -->
-                <div id="introduction" class="doc-section">
-                    <h3>Introduction to Metachu AI</h3>
-                    <div class="doc-content">
-                        <p>Metachu AI is an advanced token deployment platform that combines artificial intelligence with blockchain technology. Our platform simplifies the process of creating and deploying tokens on the Ethereum network while ensuring security and optimization.</p>
-                    </div>
+            <!-- Features Guide Card -->
+            <div class="doc-card">
+                <div class="doc-card-header">
+                    <i class="fas fa-star"></i>
+                    <h3>Features Guide</h3>
                 </div>
-
-                <!-- Getting Started -->
-                <div id="getting-started" class="doc-section">
-                    <h3>Getting Started</h3>
-                    <div class="doc-content">
-                        <h4>Prerequisites</h4>
-                        <ul class="doc-list">
-                            <li>MetaMask or compatible Web3 wallet installed</li>
-                            <li>Sufficient ETH for deployment and gas fees</li>
-                            <li>Basic understanding of agricultural practices</li>
-                        </ul>
-
-                        <h4>Quick Start Guide</h4>
-                        <ol class="doc-list numbered">
-                            <li>Connect your wallet using the "Connect Wallet" button</li>
-                            <li>Navigate to the farm monitoring dashboard</li>
-                            <li>Set up your field parameters</li>
-                            <li>Configure monitoring preferences</li>
-                            <li>Generate and customize your token logo</li>
-                            <li>Review gas estimates and deploy</li>
-                        </ol>
-                    </div>
+                <div class="doc-section">
+                    <h4>KOL Tracking</h4>
+                    <ul class="doc-list">
+                        <li>Real-time tweet monitoring</li>
+                        <li>Sentiment analysis</li>
+                        <li>Historical data analysis</li>
+                        <li>Custom alert settings</li>
+                    </ul>
                 </div>
-
-                <!-- Platform Features -->
-                <div id="platform-features" class="doc-section">
-                    <h3>Platform Features</h3>
-                    <div class="doc-content">
-                        <h4>Token Standards Support</h4>
-                        <ul class="doc-list">
-                            <li><strong>ERC-20:</strong> Standard fungible tokens</li>
-                            <li><strong>ERC-721:</strong> Non-fungible tokens (NFTs)</li>
-                            <li><strong>ERC-1155:</strong> Multi-token standard</li>
-                        </ul>
-
-                        <h4>AI-Powered Features</h4>
-                        <ul class="doc-list">
-                            <li><strong>Smart Contract Generation:</strong> AI-optimized contract code</li>
-                            <li><strong>Security Analysis:</strong> Automated vulnerability detection</li>
-                            <li><strong>Gas Optimization:</strong> AI-driven cost reduction</li>
-                            <li><strong>Logo Generation:</strong> AI-powered token logo creation</li>
-                        </ul>
-
-                        <h4>Security Features</h4>
-                        <ul class="doc-list">
-                            <li>Automated security audits</li>
-                            <li>Reentrancy protection</li>
-                            <li>Overflow prevention</li>
-                            <li>Access control management</li>
-                        </ul>
-                    </div>
+                <div class="doc-section">
+                    <h4>AI Trading</h4>
+                    <ul class="doc-list">
+                        <li>Automated trade execution</li>
+                        <li>Risk management settings</li>
+                        <li>Performance analytics</li>
+                        <li>Portfolio tracking</li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- Token Configuration -->
-                <div id="token-configuration" class="doc-section">
-                    <h3>Token Configuration</h3>
-                    <div class="doc-content">
-                        <h4>Basic Parameters</h4>
-                        <ul class="doc-list">
-                            <li><strong>Token Name:</strong> Your token's full name</li>
-                            <li><strong>Token Symbol:</strong> 3-5 character identifier</li>
-                            <li><strong>Initial Supply:</strong> Starting token amount</li>
-                            <li><strong>Decimals:</strong> Token divisibility (default: 18)</li>
-                        </ul>
-
-                        <h4>Advanced Features</h4>
-                        <ul class="doc-list">
-                            <li><strong>Mintable:</strong> Ability to create new tokens</li>
-                            <li><strong>Burnable:</strong> Ability to destroy tokens</li>
-                            <li><strong>Pausable:</strong> Emergency pause functionality</li>
-                            <li><strong>Access Control:</strong> Role-based permissions</li>
-                        </ul>
-                    </div>
+            <!-- Tutorials Card -->
+            <div class="doc-card">
+                <div class="doc-card-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Tutorials</h3>
                 </div>
-
-                <!-- AI Assistant -->
-                <div id="ai-assistant" class="doc-section">
-                    <h3>AI Assistant Integration</h3>
-                    <div class="doc-content">
-                        <p>Our AI assistant provides real-time guidance and support throughout the token deployment process:</p>
-                        <ul class="doc-list">
-                            <li>Token configuration recommendations</li>
-                            <li>Security best practices</li>
-                            <li>Gas optimization tips</li>
-                            <li>Troubleshooting assistance</li>
-                        </ul>
-                    </div>
+                <div class="doc-section">
+                    <h4>Wallet Setup</h4>
+                    <ol class="tutorial-steps">
+                        <li>Install a compatible wallet (MetaMask recommended)</li>
+                        <li>Click "Connect Wallet" in the navigation bar</li>
+                        <li>Approve the connection request</li>
+                        <li>Verify your wallet is connected</li>
+                    </ol>
                 </div>
-
-                <!-- Market Statistics -->
-                <div id="market-statistics" class="doc-section">
-                    <h3>Market Statistics</h3>
-                    <div class="doc-content">
-                        <p>Real-time market data to help you make informed decisions:</p>
-                        <ul class="doc-list">
-                            <li>Current ETH price</li>
-                            <li>Gas prices (Low, Average, High)</li>
-                            <li>Latest block number</li>
-                            <li>Network status</li>
-                        </ul>
-                    </div>
+                <div class="doc-section">
+                    <h4>Trading Configuration</h4>
+                    <ol class="tutorial-steps">
+                        <li>Navigate to Settings</li>
+                        <li>Set your risk tolerance level</li>
+                        <li>Configure trade size limits</li>
+                        <li>Save your preferences</li>
+                    </ol>
                 </div>
+            </div>
 
-                <!-- Best Practices -->
-                <div id="best-practices" class="doc-section">
-                    <h3>Best Practices</h3>
-                    <div class="doc-content">
-                        <h4>Before Deployment</h4>
-                        <ul class="doc-list">
-                            <li>Review all token parameters carefully</li>
-                            <li>Test on testnet before mainnet deployment</li>
-                            <li>Ensure sufficient ETH for deployment</li>
-                            <li>Back up all deployment information</li>
-                        </ul>
-
-                        <h4>After Deployment</h4>
-                        <ul class="doc-list">
-                            <li>Verify contract on Etherscan</li>
-                            <li>Test token functionality</li>
-                            <li>Set up monitoring</li>
-                            <li>Document admin keys securely</li>
-                        </ul>
-                    </div>
+            <!-- FAQs Card -->
+            <div class="doc-card">
+                <div class="doc-card-header">
+                    <i class="fas fa-question-circle"></i>
+                    <h3>FAQs</h3>
+                </div>
+                <div class="faq-item">
+                    <h5>How does the AI work?</h5>
+                    <p>Our AI analyzes KOL tweets using natural language processing to identify market signals and sentiment patterns that may impact crypto prices.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>Is my wallet safe?</h5>
+                    <p>Yes, we use industry-standard security practices and never store your private keys. You maintain full control of your funds at all times.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>What are the trading fees?</h5>
+                    <p>Trading fees vary by exchange and transaction type. Check our pricing page for detailed information.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>Can I customize the alerts?</h5>
+                    <p>Yes, you can set custom alerts based on specific KOLs, keywords, sentiment scores, and more in your notification settings.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <!-- Custom Cursor Elements -->
-    <div class="cursor-dot"></div>
-    <div class="custom-cursor"></div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <script src="script.js"></script>
+    <script src="theme.js"></script>
+    <script src="wallet.js"></script>
 </body>
 </html> 
