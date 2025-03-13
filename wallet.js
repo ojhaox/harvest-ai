@@ -13,8 +13,11 @@ async function initializeSolana() {
             return;
         }
 
-        // Initialize connection
-        solanaConnection = new solana.Connection("https://api.mainnet-beta.solana.com");
+        // Initialize connection using the correct constructor
+        solanaConnection = new window.solanaWeb3.Connection(
+            "https://api.mainnet-beta.solana.com",
+            'confirmed'
+        );
         console.log("✅ Solana connection initialized");
 
         // Check if already connected
@@ -65,7 +68,7 @@ async function updateWalletButton(balance) {
         if (!walletText) return;
         
         if (walletConnected && balance !== null) {
-            const formattedBalance = (balance / solana.LAMPORTS_PER_SOL).toFixed(4);
+            const formattedBalance = (balance / window.solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
             walletText.textContent = `${formattedBalance} SOL`;
             walletButton.classList.add('connected');
         } else {
@@ -80,7 +83,7 @@ async function updateBalance() {
     if (!walletConnected || !walletAddress || !solanaConnection) return;
 
     try {
-        const balance = await solanaConnection.getBalance(new solana.PublicKey(walletAddress));
+        const balance = await solanaConnection.getBalance(new window.solanaWeb3.PublicKey(walletAddress));
         await updateWalletButton(balance);
     } catch (error) {
         console.error("❌ Failed to fetch balance:", error);
