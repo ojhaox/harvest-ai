@@ -9,8 +9,8 @@ window.showWalletOverlay = function() {
     }
 };
 
-// Show notification
-function showNotification(message, type = 'info') {
+// Show notification - expose globally
+window.showNotification = function(message, type = 'info') {
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -59,10 +59,10 @@ function showNotification(message, type = 'info') {
         notification.classList.add('fade-out');
         setTimeout(() => notification.remove(), 300);
     }, 5000);
-}
+};
 
 // Add notification styles
-const style = document.createElement('style');
+document.head.appendChild(style = document.createElement('style'));
 style.textContent = `
     .notification {
         position: fixed;

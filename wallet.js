@@ -66,16 +66,7 @@ async function autoConnectWallet() {
 
 // Show error message to user
 function showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'wallet-error';
-    errorDiv.innerHTML = `
-        <div class="error-content">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>${message}</span>
-        </div>
-    `;
-    document.body.appendChild(errorDiv);
-    setTimeout(() => errorDiv.remove(), 5000);
+    window.showNotification(message, 'error');
 }
 
 // Update wallet button with balance
@@ -208,21 +199,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Wallet connection manager
 class WalletManager {
     constructor() {
+        // Initialize with null values
+        this.connectPhantomBtn = null;
+        this.connectMetaMaskBtn = null;
+        this.skipWalletBtn = null;
+        this.walletOverlay = null;
+        this.walletButton = null;
+        this.walletText = null;
+        
+        // Try to find elements
+        this.initializeElements();
+        
+        // Only initialize event listeners if required elements exist
+        if (this.hasRequiredElements()) {
+            this.initializeEventListeners();
+        } else {
+            console.warn('Some wallet UI elements are missing. Wallet functionality may be limited.');
+        }
+    }
+
+    // Initialize DOM elements
+    initializeElements() {
         this.connectPhantomBtn = document.getElementById('connect-phantom');
         this.connectMetaMaskBtn = document.getElementById('connect-metamask');
         this.skipWalletBtn = document.getElementById('skip-wallet');
         this.walletOverlay = document.getElementById('wallet-overlay');
         this.walletButton = document.querySelector('.wallet-button');
-        this.walletText = this.walletButton.querySelector('.wallet-text');
-        
-        this.initializeEventListeners();
+        this.walletText = this.walletButton?.querySelector('.wallet-text');
+    }
+
+    // Check if all required elements exist
+    hasRequiredElements() {
+        return (
+            this.connectPhantomBtn &&
+            this.connectMetaMaskBtn &&
+            this.skipWalletBtn &&
+            this.walletOverlay &&
+            this.walletButton &&
+            this.walletText
+        );
     }
 
     initializeEventListeners() {
-        this.connectPhantomBtn.addEventListener('click', () => this.connectPhantomWallet());
-        this.connectMetaMaskBtn.addEventListener('click', () => this.connectMetaMaskWallet());
-        this.skipWalletBtn.addEventListener('click', () => this.skipWallet());
-        this.walletButton.addEventListener('click', () => this.toggleWalletOverlay());
+        if (this.connectPhantomBtn) {
+            this.connectPhantomBtn.addEventListener('click', () => this.connectPhantomWallet());
+        }
+        
+        if (this.connectMetaMaskBtn) {
+            this.connectMetaMaskBtn.addEventListener('click', () => this.connectMetaMaskWallet());
+        }
+        
+        if (this.skipWalletBtn) {
+            this.skipWalletBtn.addEventListener('click', () => this.skipWallet());
+        }
+        
+        if (this.walletButton) {
+            this.walletButton.addEventListener('click', () => this.toggleWalletOverlay());
+        }
     }
 
     // Check if Phantom is installed
@@ -242,7 +275,7 @@ class WalletManager {
         try {
             // Check if Phantom is installed
             if (!await this.isPhantomInstalled()) {
-                showNotification('Please install Phantom wallet first', 'error');
+                window.showNotification('Please install Phantom wallet first', 'error');
                 window.open('https://phantom.app/', '_blank');
                 return;
             }
@@ -256,7 +289,7 @@ class WalletManager {
             // Handle successful connection
             window.walletAddress = resp.publicKey.toString();
             this.updateWalletUI(true);
-            showNotification('Wallet connected successfully!', 'success');
+            window.showNotification('Wallet connected successfully!', 'success');
             
             // Dispatch wallet connected event
             document.dispatchEvent(new CustomEvent('walletConnected', {
@@ -265,7 +298,7 @@ class WalletManager {
 
         } catch (error) {
             console.error('Phantom connection error:', error);
-            showNotification('Failed to connect wallet: ' + error.message, 'error');
+            window.showNotification('Failed to connect wallet: ' + error.message, 'error');
         }
     }
 
@@ -274,7 +307,7 @@ class WalletManager {
         try {
             // Check if MetaMask is installed
             if (!await this.isMetaMaskInstalled()) {
-                showNotification('Please install MetaMask wallet first', 'error');
+                window.showNotification('Please install MetaMask wallet first', 'error');
                 window.open('https://metamask.io/', '_blank');
                 return;
             }
@@ -290,7 +323,7 @@ class WalletManager {
             // Handle successful connection
             window.walletAddress = accounts[0];
             this.updateWalletUI(true);
-            showNotification('Wallet connected successfully!', 'success');
+            window.showNotification('Wallet connected successfully!', 'success');
             
             // Dispatch wallet connected event
             document.dispatchEvent(new CustomEvent('walletConnected', {
@@ -309,7 +342,7 @@ class WalletManager {
 
         } catch (error) {
             console.error('MetaMask connection error:', error);
-            showNotification('Failed to connect wallet: ' + error.message, 'error');
+            window.showNotification('Failed to connect wallet: ' + error.message, 'error');
         }
     }
 
@@ -317,7 +350,7 @@ class WalletManager {
     disconnectWallet() {
         window.walletAddress = null;
         this.updateWalletUI(false);
-        showNotification('Wallet disconnected', 'info');
+        window.showNotification('Wallet disconnected', 'info');
         
         // Dispatch wallet disconnected event
         document.dispatchEvent(new Event('walletDisconnected'));
@@ -326,11 +359,16 @@ class WalletManager {
     // Skip wallet connection
     skipWallet() {
         this.hideWalletOverlay();
-        showNotification('Continuing without wallet. Some features will be limited.', 'info');
+        window.showNotification('Continuing without wallet. Some features will be limited.', 'info');
     }
 
     // Update wallet UI
     updateWalletUI(connected) {
+        if (!this.walletButton || !this.walletText) {
+            console.warn('Wallet UI elements not found. Cannot update UI.');
+            return;
+        }
+
         if (connected) {
             this.walletButton.classList.add('connected');
             this.walletText.textContent = `${window.walletAddress.slice(0, 4)}...${window.walletAddress.slice(-4)}`;
@@ -343,12 +381,16 @@ class WalletManager {
 
     // Show wallet overlay
     showWalletOverlay() {
-        this.walletOverlay.classList.remove('hidden');
+        if (this.walletOverlay) {
+            this.walletOverlay.classList.remove('hidden');
+        }
     }
 
     // Hide wallet overlay
     hideWalletOverlay() {
-        this.walletOverlay.classList.add('hidden');
+        if (this.walletOverlay) {
+            this.walletOverlay.classList.add('hidden');
+        }
     }
 
     // Toggle wallet overlay
@@ -361,25 +403,32 @@ class WalletManager {
     }
 }
 
-// Initialize wallet manager
-const walletManager = new WalletManager();
+// Initialize wallet manager only after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.walletManager = new WalletManager();
+});
 
-// Check for existing wallet connections on page load
+// Update the load event listener to use the global instance
 window.addEventListener('load', async () => {
+    if (!window.walletManager) {
+        console.warn('Wallet manager not initialized. Skipping connection check.');
+        return;
+    }
+
     // Check Phantom
-    if (await walletManager.isPhantomInstalled()) {
+    if (await window.walletManager.isPhantomInstalled()) {
         const provider = window.solana;
         try {
             const resp = await provider.connect({ onlyIfTrusted: true });
             window.walletAddress = resp.publicKey.toString();
-            walletManager.updateWalletUI(true);
+            window.walletManager.updateWalletUI(true);
         } catch (error) {
             // Not previously connected
         }
     }
     
     // Check MetaMask
-    if (await walletManager.isMetaMaskInstalled()) {
+    if (await window.walletManager.isMetaMaskInstalled()) {
         const provider = window.ethereum;
         try {
             const accounts = await provider.request({ 
@@ -387,7 +436,7 @@ window.addEventListener('load', async () => {
             });
             if (accounts.length > 0) {
                 window.walletAddress = accounts[0];
-                walletManager.updateWalletUI(true);
+                window.walletManager.updateWalletUI(true);
             }
         } catch (error) {
             // Not previously connected
