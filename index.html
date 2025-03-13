@@ -36,8 +36,8 @@
         </div>
         <div class="nav-container">
             <ul class="nav-links">
-                <li><a href="#documentation">Documentation</a></li>
-                <li><a href="#deployed-tokens">Deployed Tokens</a></li>
+                <li><a href="documentation.html">Documentation</a></li>
+                <li><a href="deployed-tokens.html">Deployed Tokens</a></li>
             </ul>
             <div class="social-icons">
                 <a href="#" class="social-icon">
@@ -57,13 +57,150 @@
         <div class="hero-content">
             <h1 class="animate-text">Welcome to Metachu AI!</h1>
             <p class="animate-text-delay">Your AI-Powered Token Deployment Platform</p>
+            <p class="hero-description animate-text-delay">Experience the future of token creation with our advanced AI technology. Deploy secure, customizable ERC-20 tokens with automated smart contract generation, real-time market analysis, and built-in security features.</p>
             <div class="hero-features">
                 <span class="feature-tag">ERC-20</span>
-                <span class="feature-tag">ERC-721</span>
-                <span class="feature-tag">ERC-1155</span>
                 <span class="feature-tag">Custom Tokens</span>
             </div>
+            <div class="hero-highlights">
+                <div class="highlight-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Enhanced Security</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-bolt"></i>
+                    <span>Instant Deployment</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-robot"></i>
+                    <span>AI-Powered</span>
+                </div>
+            </div>
             <button class="cta-button">Deploy Your Token</button>
+        </div>
+    </section>
+
+    <!-- Token Deployment Form -->
+    <section id="deploy-token" class="deploy-token">
+        <div class="container">
+            <h2>Deploy Your Token</h2>
+            <div class="deployment-form">
+                <div class="form-grid">
+                    <!-- Token Basic Info -->
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        <div class="form-group">
+                            <label for="tokenName">Token Name</label>
+                            <input type="text" id="tokenName" placeholder="e.g., My Awesome Token" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tokenSymbol">Token Symbol</label>
+                            <input type="text" id="tokenSymbol" placeholder="e.g., MAT" maxlength="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tokenSupply">Initial Supply</label>
+                            <input type="number" id="tokenSupply" placeholder="e.g., 1000000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tokenDecimals">Decimals</label>
+                            <input type="number" id="tokenDecimals" value="18" min="0" max="18" required>
+                        </div>
+                    </div>
+
+                    <!-- Token Features -->
+                    <div class="form-section">
+                        <h3>Token Features</h3>
+                        <div class="feature-toggles">
+                            <div class="toggle-group">
+                                <label class="toggle">
+                                    <input type="checkbox" id="mintable">
+                                    <span class="slider"></span>
+                                    Mintable
+                                </label>
+                                <div class="feature-info">Allow creation of new tokens</div>
+                            </div>
+                            <div class="toggle-group">
+                                <label class="toggle">
+                                    <input type="checkbox" id="burnable">
+                                    <span class="slider"></span>
+                                    Burnable
+                                </label>
+                                <div class="feature-info">Allow token destruction</div>
+                            </div>
+                            <div class="toggle-group">
+                                <label class="toggle">
+                                    <input type="checkbox" id="pausable">
+                                    <span class="slider"></span>
+                                    Pausable
+                                </label>
+                                <div class="feature-info">Ability to pause transfers</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Token Logo Generator -->
+                    <div class="form-section">
+                        <h3>Token Logo</h3>
+                        <div class="logo-generator">
+                            <div class="logo-preview">
+                                <img id="tokenLogo" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
+                            </div>
+                            
+                            <!-- AI Logo Chat Interface -->
+                            <div class="logo-chat">
+                                <div class="logo-chat-messages" id="logoChatMessages">
+                                    <div class="chat-message bot">
+                                        Hello! I'm your AI logo designer. Describe your ideal token logo and I'll help create it! 🎨
+                                    </div>
+                                </div>
+                                <div class="logo-chat-input">
+                                    <input type="text" id="logoChatInput" placeholder="Describe your logo idea...">
+                                    <button id="sendLogoPrompt">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                                <div class="logo-suggestions">
+                                    <span class="logo-suggestion">Modern & Minimal</span>
+                                    <span class="logo-suggestion">Colorful & Fun</span>
+                                    <span class="logo-suggestion">Professional & Sleek</span>
+                                </div>
+                            </div>
+
+                            <div class="logo-controls">
+                                <button id="generateLogo" class="generate-logo-btn">
+                                    <i class="fas fa-magic"></i> Generate Logo
+                                </button>
+                                <div class="logo-style-options">
+                                    <select id="logoStyle">
+                                        <option value="abstract">Abstract</option>
+                                        <option value="geometric">Geometric</option>
+                                        <option value="minimalist">Minimalist</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deployment Actions -->
+                <div class="deployment-actions">
+                    <button id="estimateGas" class="estimate-btn">
+                        <i class="fas fa-calculator"></i> Estimate Gas
+                    </button>
+                    <button id="deployToken" class="deploy-btn">
+                        <i class="fas fa-rocket"></i> Deploy Token
+                    </button>
+                </div>
+
+                <!-- Deployment Status -->
+                <div class="deployment-status" style="display: none;">
+                    <div class="status-spinner">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                    </div>
+                    <div class="status-message">Deploying your token...</div>
+                    <div class="status-details"></div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -143,6 +280,7 @@
         </div>
     </section>
 
+    <!-- Token Deployment Process -->
     <section id="deployment-steps" class="deployment-steps">
         <div class="container">
             <h2>Token Deployment Process</h2>
@@ -227,5 +365,8 @@
         }
     </script>
     <script src="script.js"></script>
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="custom-cursor"></div>
 </body>
 </html> 

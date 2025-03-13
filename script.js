@@ -433,3 +433,158 @@ stepCards.forEach(card => {
         card.style.boxShadow = 'var(--glow)';
     });
 }); 
+
+// AI Logo Generator Chat Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const logoChatInput = document.getElementById('logoChatInput');
+    const sendLogoPrompt = document.getElementById('sendLogoPrompt');
+    const logoChatMessages = document.getElementById('logoChatMessages');
+    const logoSuggestions = document.querySelectorAll('.logo-suggestion');
+    const logoChatContainer = document.querySelector('.logo-chat');
+
+    // Center the logo chat container
+    if (logoChatContainer) {
+        // Add styles for right-aligned layout
+        logoChatContainer.style.position = 'fixed';  // Changed to fixed positioning
+        logoChatContainer.style.right = '30px';  // Position from right edge
+        logoChatContainer.style.top = '100px';  // Position from top to leave space for navbar
+        logoChatContainer.style.width = '400px';  // Adjusted width for sidebar
+        logoChatContainer.style.maxWidth = '90vw';  // Responsive max-width
+        logoChatContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+        logoChatContainer.style.borderRadius = '12px';
+        logoChatContainer.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+        logoChatContainer.style.zIndex = '100';
+        logoChatContainer.style.padding = '20px';
+        logoChatContainer.style.transition = 'all 0.3s ease';  // Smooth transitions
+
+        // Add a header to the chat container
+        const chatHeader = document.createElement('div');
+        chatHeader.style.padding = '10px';
+        chatHeader.style.marginBottom = '15px';
+        chatHeader.style.borderBottom = '1px solid rgba(0, 0, 0, 0.1)';
+        chatHeader.style.fontWeight = 'bold';
+        chatHeader.style.display = 'flex';
+        chatHeader.style.justifyContent = 'space-between';
+        chatHeader.style.alignItems = 'center';
+        chatHeader.innerHTML = `
+            <span>AI Logo Designer 🎨</span>
+            <button id="minimizeChat" style="
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 20px;
+                padding: 5px;
+                color: #666;
+            ">−</button>
+        `;
+        logoChatContainer.insertBefore(chatHeader, logoChatContainer.firstChild);
+
+        // Style the messages container
+        if (logoChatMessages) {
+            logoChatMessages.style.height = '400px';
+            logoChatMessages.style.overflowY = 'auto';
+            logoChatMessages.style.padding = '15px';
+            logoChatMessages.style.marginBottom = '15px';
+            logoChatMessages.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+            logoChatMessages.style.borderRadius = '8px';
+        }
+
+        // Style the input and button
+        if (logoChatInput) {
+            logoChatInput.style.width = 'calc(100% - 24px)';
+            logoChatInput.style.margin = '10px';
+            logoChatInput.style.padding = '12px';
+            logoChatInput.style.borderRadius = '8px';
+            logoChatInput.style.border = '1px solid #e0e0e0';
+            logoChatInput.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        }
+
+        // Add minimize/maximize functionality
+        const minimizeBtn = document.getElementById('minimizeChat');
+        let isMinimized = false;
+        const originalHeight = logoChatMessages.style.height;
+
+        minimizeBtn.addEventListener('click', () => {
+            if (isMinimized) {
+                logoChatMessages.style.height = originalHeight;
+                minimizeBtn.textContent = '−';
+            } else {
+                logoChatMessages.style.height = '0';
+                minimizeBtn.textContent = '+';
+            }
+            isMinimized = !isMinimized;
+        });
+
+        // Add a container for logo suggestions
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.style.padding = '10px';
+        suggestionsContainer.style.textAlign = 'center';
+        
+        // Style the suggestions
+        logoSuggestions.forEach(suggestion => {
+            suggestion.style.margin = '5px';
+            suggestion.style.padding = '8px 15px';
+            suggestion.style.borderRadius = '20px';
+            suggestion.style.backgroundColor = 'rgba(240, 240, 240, 0.9)';
+            suggestion.style.cursor = 'pointer';
+            suggestion.style.transition = 'all 0.3s ease';
+            suggestion.style.display = 'inline-block';
+            
+            // Add hover effect
+            suggestion.addEventListener('mouseenter', () => {
+                suggestion.style.backgroundColor = 'rgba(220, 220, 220, 0.9)';
+                suggestion.style.transform = 'scale(1.05)';
+            });
+            
+            suggestion.addEventListener('mouseleave', () => {
+                suggestion.style.backgroundColor = 'rgba(240, 240, 240, 0.9)';
+                suggestion.style.transform = 'scale(1)';
+            });
+            
+            suggestionsContainer.appendChild(suggestion);
+        });
+
+        // Add suggestions container to the chat
+        logoChatContainer.appendChild(suggestionsContainer);
+    }
+
+    // Function to add a message to the chat
+    function addMessage(message, isUser = false, isLogo = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+        
+        if (isLogo) {
+            // Create an image element for the logo
+            const logoImg = document.createElement('img');
+            logoImg.src = message;
+            logoImg.style.maxWidth = '200px';
+            logoImg.style.height = 'auto';
+            logoImg.style.borderRadius = '8px';
+            logoImg.style.margin = '10px 0';
+            logoImg.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.1)';
+            messageDiv.appendChild(logoImg);
+        } else {
+            messageDiv.textContent = message;
+        }
+        
+        logoChatMessages.appendChild(messageDiv);
+        logoChatMessages.scrollTop = logoChatMessages.scrollHeight;
+    }
+
+    // Handle send button click
+    sendLogoPrompt.addEventListener('click', function() {
+        const prompt = logoChatInput.value.trim();
+        if (prompt) {
+            addMessage(prompt, true);
+            logoChatInput.value = '';
+
+            // Simulate AI processing
+            addMessage('Generating your logo based on the description... 🎨');
+            setTimeout(() => {
+                const logoUrl = generateLogoFromPrompt(prompt.toLowerCase());
+                addMessage(logoUrl, false, true);  // Add the logo as an image in the chat
+                addMessage('Here\'s your generated logo! How do you like it? Feel free to describe any adjustments. ✨');
+            }, 1500);
+        }
+    });
+});
