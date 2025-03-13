@@ -145,23 +145,22 @@ class WalletManager {
     async connectPhantomWallet() {
         try {
             // Check if Phantom is installed
-            if (!await this.isPhantomInstalled()) {
+            const provider = window?.solana;
+            if (!provider) {
                 window.showNotification('Please install Phantom wallet first', 'error');
                 window.open('https://phantom.app/', '_blank');
                 return;
             }
 
-            // If already connected, disconnect first
-            if (window.walletConnected) {
-                await this.disconnectWallet();
-                return;
+            // Force disconnect first to ensure fresh connection
+            try {
+                await provider.disconnect();
+            } catch (e) {
+                // Ignore disconnect errors
             }
 
-            // Request wallet connection with explicit popup
-            const provider = window.solana;
-            const resp = await provider.connect({
-                onlyIfTrusted: false // Force popup even if previously connected
-            });
+            // Request new connection - this will trigger the popup
+            const resp = await provider.connect();
             
             // Handle successful connection
             window.walletAddress = resp.publicKey.toString();
@@ -193,25 +192,32 @@ class WalletManager {
     async connectMetaMaskWallet() {
         try {
             // Check if MetaMask is installed
-            if (!await this.isMetaMaskInstalled()) {
+            const provider = window?.ethereum;
+            if (!provider || !provider.isMetaMask) {
                 window.showNotification('Please install MetaMask wallet first', 'error');
                 window.open('https://metamask.io/', '_blank');
                 return;
             }
 
-            // If already connected, disconnect first
-            if (window.walletConnected) {
-                await this.disconnectWallet();
-                return;
+            // Force disconnect by clearing any existing connections
+            try {
+                await provider.request({
+                    method: 'wallet_requestPermissions',
+                    params: [{ eth_accounts: {} }]
+                });
+            } catch (e) {
+                // Ignore permission request errors
             }
 
-            // Request wallet connection
-            const provider = window.ethereum;
-            
-            // Request account access - this triggers the popup
-            const accounts = await provider.request({ 
-                method: 'eth_requestAccounts' 
+            // Request new account access - this will trigger the popup
+            const accounts = await provider.request({
+                method: 'eth_requestAccounts',
+                params: []
             });
+            
+            if (!accounts || accounts.length === 0) {
+                throw new Error('No accounts returned from MetaMask');
+            }
             
             // Handle successful connection
             window.walletAddress = accounts[0];
