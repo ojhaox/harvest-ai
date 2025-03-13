@@ -1,5 +1,4 @@
 // Wallet Connection and Balance Management
-let walletConnected = false;
 let walletAddress = null;
 let solanaConnection = null;
 let connectionInterval = null;
@@ -35,7 +34,7 @@ async function autoConnectWallet() {
     try {
         const resp = await window.solana.connect({ onlyIfTrusted: true });
         walletAddress = resp.publicKey.toString();
-        walletConnected = true;
+        window.walletConnected = true;
         await updateBalance();
         connectionInterval = setInterval(updateBalance, 30000);
         console.log("✅ Wallet auto-connected:", walletAddress);
@@ -67,7 +66,7 @@ async function updateWalletButton(balance) {
         
         if (!walletText) return;
         
-        if (walletConnected && balance !== null) {
+        if (window.walletConnected && balance !== null) {
             const formattedBalance = (balance / window.solanaWeb3.LAMPORTS_PER_SOL).toFixed(4);
             walletText.textContent = `${formattedBalance} SOL`;
             walletButton.classList.add('connected');
@@ -80,7 +79,7 @@ async function updateWalletButton(balance) {
 
 // Fetch and update SOL balance
 async function updateBalance() {
-    if (!walletConnected || !walletAddress || !solanaConnection) return;
+    if (!window.walletConnected || !walletAddress || !solanaConnection) return;
 
     try {
         const balance = await solanaConnection.getBalance(new window.solanaWeb3.PublicKey(walletAddress));
@@ -98,7 +97,7 @@ async function disconnectWallet() {
             await window.solana.disconnect();
         }
         
-        walletConnected = false;
+        window.walletConnected = false;
         walletAddress = null;
         if (connectionInterval) {
             clearInterval(connectionInterval);
@@ -126,7 +125,7 @@ async function connectWallet() {
         }
 
         // If already connected, disconnect first
-        if (walletConnected) {
+        if (window.walletConnected) {
             await disconnectWallet();
             return;
         }
@@ -134,7 +133,7 @@ async function connectWallet() {
         // Connect to wallet
         const response = await window.solana.connect();
         walletAddress = response.publicKey.toString();
-        walletConnected = true;
+        window.walletConnected = true;
 
         // Initial balance update
         await updateBalance();
