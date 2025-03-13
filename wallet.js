@@ -203,4 +203,194 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
+});
+
+// Wallet connection manager
+class WalletManager {
+    constructor() {
+        this.connectPhantomBtn = document.getElementById('connect-phantom');
+        this.connectMetaMaskBtn = document.getElementById('connect-metamask');
+        this.skipWalletBtn = document.getElementById('skip-wallet');
+        this.walletOverlay = document.getElementById('wallet-overlay');
+        this.walletButton = document.querySelector('.wallet-button');
+        this.walletText = this.walletButton.querySelector('.wallet-text');
+        
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        this.connectPhantomBtn.addEventListener('click', () => this.connectPhantomWallet());
+        this.connectMetaMaskBtn.addEventListener('click', () => this.connectMetaMaskWallet());
+        this.skipWalletBtn.addEventListener('click', () => this.skipWallet());
+        this.walletButton.addEventListener('click', () => this.toggleWalletOverlay());
+    }
+
+    // Check if Phantom is installed
+    async isPhantomInstalled() {
+        const provider = window?.solana;
+        return !!provider?.isPhantom;
+    }
+
+    // Check if MetaMask is installed
+    async isMetaMaskInstalled() {
+        const provider = window?.ethereum;
+        return !!provider && provider.isMetaMask;
+    }
+
+    // Connect to Phantom wallet
+    async connectPhantomWallet() {
+        try {
+            // Check if Phantom is installed
+            if (!await this.isPhantomInstalled()) {
+                showNotification('Please install Phantom wallet first', 'error');
+                window.open('https://phantom.app/', '_blank');
+                return;
+            }
+
+            // Request wallet connection
+            const provider = window.solana;
+            
+            // Request wallet permissions
+            const resp = await provider.connect();
+            
+            // Handle successful connection
+            window.walletAddress = resp.publicKey.toString();
+            this.updateWalletUI(true);
+            showNotification('Wallet connected successfully!', 'success');
+            
+            // Dispatch wallet connected event
+            document.dispatchEvent(new CustomEvent('walletConnected', {
+                detail: { address: window.walletAddress }
+            }));
+
+        } catch (error) {
+            console.error('Phantom connection error:', error);
+            showNotification('Failed to connect wallet: ' + error.message, 'error');
+        }
+    }
+
+    // Connect to MetaMask wallet
+    async connectMetaMaskWallet() {
+        try {
+            // Check if MetaMask is installed
+            if (!await this.isMetaMaskInstalled()) {
+                showNotification('Please install MetaMask wallet first', 'error');
+                window.open('https://metamask.io/', '_blank');
+                return;
+            }
+
+            // Request wallet connection
+            const provider = window.ethereum;
+            
+            // Request account access
+            const accounts = await provider.request({ 
+                method: 'eth_requestAccounts' 
+            });
+            
+            // Handle successful connection
+            window.walletAddress = accounts[0];
+            this.updateWalletUI(true);
+            showNotification('Wallet connected successfully!', 'success');
+            
+            // Dispatch wallet connected event
+            document.dispatchEvent(new CustomEvent('walletConnected', {
+                detail: { address: window.walletAddress }
+            }));
+
+            // Listen for account changes
+            provider.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    this.disconnectWallet();
+                } else {
+                    window.walletAddress = accounts[0];
+                    this.updateWalletUI(true);
+                }
+            });
+
+        } catch (error) {
+            console.error('MetaMask connection error:', error);
+            showNotification('Failed to connect wallet: ' + error.message, 'error');
+        }
+    }
+
+    // Disconnect wallet
+    disconnectWallet() {
+        window.walletAddress = null;
+        this.updateWalletUI(false);
+        showNotification('Wallet disconnected', 'info');
+        
+        // Dispatch wallet disconnected event
+        document.dispatchEvent(new Event('walletDisconnected'));
+    }
+
+    // Skip wallet connection
+    skipWallet() {
+        this.hideWalletOverlay();
+        showNotification('Continuing without wallet. Some features will be limited.', 'info');
+    }
+
+    // Update wallet UI
+    updateWalletUI(connected) {
+        if (connected) {
+            this.walletButton.classList.add('connected');
+            this.walletText.textContent = `${window.walletAddress.slice(0, 4)}...${window.walletAddress.slice(-4)}`;
+            this.hideWalletOverlay();
+        } else {
+            this.walletButton.classList.remove('connected');
+            this.walletText.textContent = 'Connect Wallet';
+        }
+    }
+
+    // Show wallet overlay
+    showWalletOverlay() {
+        this.walletOverlay.classList.remove('hidden');
+    }
+
+    // Hide wallet overlay
+    hideWalletOverlay() {
+        this.walletOverlay.classList.add('hidden');
+    }
+
+    // Toggle wallet overlay
+    toggleWalletOverlay() {
+        if (window.walletAddress) {
+            this.disconnectWallet();
+        } else {
+            this.showWalletOverlay();
+        }
+    }
+}
+
+// Initialize wallet manager
+const walletManager = new WalletManager();
+
+// Check for existing wallet connections on page load
+window.addEventListener('load', async () => {
+    // Check Phantom
+    if (await walletManager.isPhantomInstalled()) {
+        const provider = window.solana;
+        try {
+            const resp = await provider.connect({ onlyIfTrusted: true });
+            window.walletAddress = resp.publicKey.toString();
+            walletManager.updateWalletUI(true);
+        } catch (error) {
+            // Not previously connected
+        }
+    }
+    
+    // Check MetaMask
+    if (await walletManager.isMetaMaskInstalled()) {
+        const provider = window.ethereum;
+        try {
+            const accounts = await provider.request({ 
+                method: 'eth_accounts'
+            });
+            if (accounts.length > 0) {
+                window.walletAddress = accounts[0];
+                walletManager.updateWalletUI(true);
+            }
+        } catch (error) {
+            // Not previously connected
+        }
+    }
 }); 

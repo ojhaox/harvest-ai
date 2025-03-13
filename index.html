@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -369,143 +369,8 @@
                 
                 <!-- KOL Grid with sample cards -->
                 <div class="kol-grid">
-                    <!-- KOL Card 1 -->
-                    <div class="kol-card">
-                        <div class="kol-tracking-status active">
-                            <i class="fas fa-circle"></i> Active
-                        </div>
-                        <div class="kol-card-header">
-                            <div class="kol-card-avatar">S</div>
-                            <div class="kol-card-info">
-                                <div class="kol-card-name">SolanaWhale</div>
-                                <div class="kol-card-handle">
-                                    <i class="fab fa-twitter"></i> @solana_whale
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kol-card-body">
-                            <div class="kol-card-stats">
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">45K</div>
-                                    <div class="kol-stat-label">Followers</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">89%</div>
-                                    <div class="kol-stat-label">Accuracy</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">12</div>
-                                    <div class="kol-stat-label">Trades</div>
-                                </div>
-                            </div>
-                            <div class="kol-card-tags">
-                                <span class="kol-tag">Solana</span>
-                                <span class="kol-tag">DeFi</span>
-                                <span class="kol-tag">NFTs</span>
-                            </div>
-                            <div class="kol-card-actions">
-                                <button class="kol-action-btn secondary">
-                                    <i class="fas fa-chart-line"></i> View Stats
-                                </button>
-                                <button class="kol-action-btn danger">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- KOL Card 2 -->
-                    <div class="kol-card">
-                        <div class="kol-tracking-status active">
-                            <i class="fas fa-circle"></i> Active
-                        </div>
-                        <div class="kol-card-header">
-                            <div class="kol-card-avatar">C</div>
-                            <div class="kol-card-info">
-                                <div class="kol-card-name">CryptoGems</div>
-                                <div class="kol-card-handle">
-                                    <i class="fab fa-twitter"></i> @gems_finder
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kol-card-body">
-                            <div class="kol-card-stats">
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">28K</div>
-                                    <div class="kol-stat-label">Followers</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">76%</div>
-                                    <div class="kol-stat-label">Accuracy</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">8</div>
-                                    <div class="kol-stat-label">Trades</div>
-                                </div>
-                            </div>
-                            <div class="kol-card-tags">
-                                <span class="kol-tag">Gems</span>
-                                <span class="kol-tag">Solana</span>
-                                <span class="kol-tag">Airdrops</span>
-                            </div>
-                            <div class="kol-card-actions">
-                                <button class="kol-action-btn secondary">
-                                    <i class="fas fa-chart-line"></i> View Stats
-                                </button>
-                                <button class="kol-action-btn danger">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- KOL Card 3 -->
-                    <div class="kol-card">
-                        <div class="kol-tracking-status inactive">
-                            <i class="fas fa-circle"></i> Inactive
-                        </div>
-                        <div class="kol-card-header">
-                            <div class="kol-card-avatar">A</div>
-                            <div class="kol-card-info">
-                                <div class="kol-card-name">Alpha Hunter</div>
-                                <div class="kol-card-handle">
-                                    <i class="fab fa-twitter"></i> @alpha_hunter
-                                </div>
-                            </div>
-                        </div>
-                        <div class="kol-card-body">
-                            <div class="kol-card-stats">
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">15K</div>
-                                    <div class="kol-stat-label">Followers</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">92%</div>
-                                    <div class="kol-stat-label">Accuracy</div>
-                                </div>
-                                <div class="kol-stat">
-                                    <div class="kol-stat-value">5</div>
-                                    <div class="kol-stat-label">Trades</div>
-                                </div>
-                            </div>
-                            <div class="kol-card-tags">
-                                <span class="kol-tag">Alpha</span>
-                                <span class="kol-tag">Solana</span>
-                                <span class="kol-tag">Trading</span>
-                            </div>
-                            <div class="kol-card-actions">
-                                <button class="kol-action-btn primary">
-                                    <i class="fas fa-play"></i> Activate
-                                </button>
-                                <button class="kol-action-btn danger">
-                                    <i class="fas fa-times"></i> Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Empty state (hidden by default, will be shown when no KOLs are added) -->
-                    <div class="kol-empty-state" style="display: none;">
+                    <!-- Empty state (shown by default) -->
+                    <div class="kol-empty-state">
                         <i class="fas fa-user-plus"></i>
                         <h3>No KOLs Added Yet</h3>
                         <p>Start by adding Twitter handles of Key Opinion Leaders (KOLs) in the Solana ecosystem to track their activity and get trading signals.</p>
@@ -660,6 +525,8 @@
     <script src="shared.js"></script>
     <script src="theme.js"></script>
     <script src="wallet.js"></script>
+    <script src="kol-manager.js"></script>
+    <script src="kol-activity.js"></script>
     <script src="script.js"></script>
     <script src="dashboard.js"></script>
 
