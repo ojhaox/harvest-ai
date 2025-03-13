@@ -39,7 +39,10 @@ async function initializeSolana() {
         }
     } catch (error) {
         console.error("❌ Failed to initialize Solana connection:", error);
-        window.showNotification("Failed to initialize Solana connection. Please refresh the page.", 'error');
+        // Use setTimeout to prevent potential recursion
+        setTimeout(() => {
+            window.showNotification("Failed to initialize Solana connection. Please refresh the page.", 'error');
+        }, 0);
     }
 }
 
@@ -147,7 +150,9 @@ class WalletManager {
             // Check if Phantom is installed
             const provider = window?.solana;
             if (!provider) {
-                window.showNotification('Please install Phantom wallet first', 'error');
+                setTimeout(() => {
+                    window.showNotification('Please install Phantom wallet first', 'error');
+                }, 0);
                 window.open('https://phantom.app/', '_blank');
                 return;
             }
@@ -175,7 +180,9 @@ class WalletManager {
             connectionInterval = setInterval(() => this.updateBalance(), 30000);
             
             // Show success message
-            window.showNotification('Wallet connected successfully!', 'success');
+            setTimeout(() => {
+                window.showNotification('Wallet connected successfully!', 'success');
+            }, 0);
             
             // Dispatch wallet connected event
             document.dispatchEvent(new CustomEvent('walletConnected', {
@@ -184,7 +191,9 @@ class WalletManager {
 
         } catch (error) {
             console.error('Phantom connection error:', error);
-            window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+            setTimeout(() => {
+                window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+            }, 0);
         }
     }
 
@@ -194,7 +203,9 @@ class WalletManager {
             // Check if MetaMask is installed
             const provider = window?.ethereum;
             if (!provider || !provider.isMetaMask) {
-                window.showNotification('Please install MetaMask wallet first', 'error');
+                setTimeout(() => {
+                    window.showNotification('Please install MetaMask wallet first', 'error');
+                }, 0);
                 window.open('https://metamask.io/', '_blank');
                 return;
             }
@@ -223,7 +234,9 @@ class WalletManager {
             window.walletAddress = accounts[0];
             window.walletConnected = true;
             this.updateWalletUI(true);
-            window.showNotification('Wallet connected successfully!', 'success');
+            setTimeout(() => {
+                window.showNotification('Wallet connected successfully!', 'success');
+            }, 0);
             
             // Dispatch wallet connected event
             document.dispatchEvent(new CustomEvent('walletConnected', {
@@ -242,7 +255,9 @@ class WalletManager {
 
         } catch (error) {
             console.error('MetaMask connection error:', error);
-            window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+            setTimeout(() => {
+                window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+            }, 0);
         }
     }
 
@@ -266,13 +281,17 @@ class WalletManager {
             
             // Update UI
             this.updateWalletUI(false);
-            window.showNotification('Wallet disconnected', 'info');
+            setTimeout(() => {
+                window.showNotification('Wallet disconnected', 'info');
+            }, 0);
             
             // Dispatch wallet disconnected event
             document.dispatchEvent(new Event('walletDisconnected'));
         } catch (error) {
             console.error('Failed to disconnect wallet:', error);
-            window.showNotification('Failed to disconnect wallet: ' + error.message, 'error');
+            setTimeout(() => {
+                window.showNotification('Failed to disconnect wallet: ' + error.message, 'error');
+            }, 0);
         }
     }
 
