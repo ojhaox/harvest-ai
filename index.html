@@ -216,13 +216,13 @@
     </div>
 
     <!-- Primary ethers.js source -->
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <!-- Fallback ethers.js source -->
     <script>
         if (!window.ethers) {
             console.log('Primary ethers.js failed to load, trying fallback...');
             const fallbackScript = document.createElement('script');
-            fallbackScript.src = 'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js';
+            fallbackScript.src = 'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js';
             document.body.appendChild(fallbackScript);
         }
     </script>

@@ -1,59 +1,95 @@
 // Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
+document.addEventListener('DOMContentLoaded', () => {
+    const anchors = document.querySelectorAll('a[href^="#"]');
+    if (anchors) {
+        anchors.forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
         });
-    });
-});
-
-// Navbar background change on scroll
-const navbar = document.querySelector('.navbar');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.9)';
-        navbar.style.boxShadow = 'none';
     }
+
+    // Initialize other event listeners only after DOM is loaded
+    initializeNavbar();
+    initializeObserver();
+    initializeCTAButton();
+    initializeWalletConnection();
+    initializeChat();
 });
 
-// Reveal elements on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
+// Navbar initialization
+function initializeNavbar() {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.9)';
+                navbar.style.boxShadow = 'none';
+            }
+        });
+    }
+}
 
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
+// Observer initialization
+function initializeObserver() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
 
-// Observe all about cards
-document.querySelectorAll('.about-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = 'all 0.6s ease-out';
-    observer.observe(card);
-});
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
 
-// Add hover effect to CTA button
-const ctaButton = document.querySelector('.cta-button');
-ctaButton.addEventListener('mouseover', () => {
-    ctaButton.style.transform = 'translateY(-3px)';
-    ctaButton.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
-});
+    // Observe all about cards
+    const aboutCards = document.querySelectorAll('.about-card');
+    if (aboutCards) {
+        aboutCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+    }
+}
 
-ctaButton.addEventListener('mouseout', () => {
-    ctaButton.style.transform = 'translateY(0)';
-    ctaButton.style.boxShadow = 'none';
-});
+// CTA button initialization
+function initializeCTAButton() {
+    const ctaButton = document.querySelector('.cta-button');
+    if (ctaButton) {
+        ctaButton.addEventListener('mouseover', () => {
+            ctaButton.style.transform = 'translateY(-3px)';
+            ctaButton.style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)';
+        });
+
+        ctaButton.addEventListener('mouseout', () => {
+            ctaButton.style.transform = 'translateY(0)';
+            ctaButton.style.boxShadow = 'none';
+        });
+    }
+}
+
+// Wallet connection initialization
+function initializeWalletConnection() {
+    const connectButton = document.getElementById('connectWallet');
+    if (connectButton) {
+        connectButton.addEventListener('click', connectWallet);
+    }
+}
 
 // MetaMask Connection
 const connectWallet = async () => {
@@ -88,9 +124,6 @@ const connectWallet = async () => {
         alert('Please install MetaMask!');
     }
 };
-
-// Add click event to wallet button
-document.getElementById('connectWallet').addEventListener('click', connectWallet);
 
 // AI Chatbot Functionality
 function initializeChat() {
@@ -189,9 +222,6 @@ function initializeChat() {
     }
 }
 
-// Initialize chat when DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeChat);
-
 // Market Statistics Updates
 function waitForEthers() {
     return new Promise((resolve) => {
@@ -212,104 +242,163 @@ async function updateMarketStats() {
     try {
         console.log('Updating market statistics...');
 
-        // Get ETH Price (using CoinGecko API with CORS mode)
-        console.log('Fetching ETH price...');
-        const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-        const priceData = await priceResponse.json();
-        console.log('ETH price data:', priceData);
-        
-        if (priceData.ethereum) {
-            document.getElementById('eth-price').textContent = `$${priceData.ethereum.usd.toLocaleString()}`;
-        } else {
-            document.getElementById('eth-price').textContent = 'Loading...';
-        }
-
-        // Ensure ethers.js is loaded
-        await waitForEthers();
-
-        // Get Gas Prices and Block Number using Web3
-        console.log('Initializing Web3...');
-        // Try multiple providers in case one fails
-        let provider;
-        const providers = [
-            'https://eth-mainnet.public.blastapi.io',
-            'https://rpc.ankr.com/eth',
-            'https://ethereum.publicnode.com',
-            'https://cloudflare-eth.com'
-        ];
-
-        let error;
-        for (const rpcUrl of providers) {
-            try {
-                provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-                // Test the connection
-                await provider.getNetwork();
-                console.log('Connected to provider:', rpcUrl);
-                break;
-            } catch (e) {
-                console.log('Failed to connect to provider:', rpcUrl);
-                error = e;
-                continue;
-            }
-        }
-
-        if (!provider) {
-            throw error || new Error('No working provider found');
-        }
-        
-        // Get Gas Price
-        console.log('Fetching gas prices...');
-        const gasPrice = await provider.getGasPrice();
-        const gasPriceInGwei = Math.round(Number(ethers.utils.formatUnits(gasPrice, "gwei")));
-        console.log('Gas price:', gasPriceInGwei, 'Gwei');
-
-        // Calculate different gas price tiers
-        const lowGasPrice = Math.max(1, Math.round(gasPriceInGwei * 0.8));  // Minimum 1 Gwei
-        const avgGasPrice = gasPriceInGwei;
-        const highGasPrice = Math.round(gasPriceInGwei * 1.2);
-
-        document.getElementById('gas-low').textContent = `${lowGasPrice} Gwei`;
-        document.getElementById('gas-avg').textContent = `${avgGasPrice} Gwei`;
-        document.getElementById('gas-high').textContent = `${highGasPrice} Gwei`;
-
-        // Get Block Number
-        console.log('Fetching block number...');
-        const blockNumber = await provider.getBlockNumber();
-        console.log('Block number:', blockNumber);
-        
-        if (blockNumber) {
-            document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
-        } else {
-            document.getElementById('block-number').textContent = 'Loading...';
-        }
-
-    } catch (error) {
-        console.error('Error updating market stats:', error);
-        // Set fallback UI for errors
+        // Update UI to show loading state
         document.getElementById('eth-price').textContent = 'Loading...';
         document.getElementById('gas-low').textContent = 'Loading...';
         document.getElementById('gas-avg').textContent = 'Loading...';
         document.getElementById('gas-high').textContent = 'Loading...';
         document.getElementById('block-number').textContent = 'Loading...';
-        
-        // Try to update again after 5 seconds if there's an error
-        setTimeout(updateMarketStats, 5000);
+
+        // Get ETH Price from multiple sources
+        async function getETHPrice() {
+            try {
+                // Try CoinGecko first
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+                const data = await response.json();
+                if (data.ethereum && data.ethereum.usd) {
+                    return data.ethereum.usd;
+                }
+            } catch (error) {
+                console.log('CoinGecko API failed, trying alternative...');
+            }
+
+            try {
+                // Fallback to Binance API
+                const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=ETHUSDT');
+                const data = await response.json();
+                if (data.price) {
+                    return parseFloat(data.price);
+                }
+            } catch (error) {
+                console.log('Binance API failed');
+                throw new Error('Failed to fetch ETH price');
+            }
+        }
+
+        // Get Gas Prices from multiple sources
+        async function getGasPrices() {
+            try {
+                // Try Etherscan API (no key required for this endpoint)
+                const response = await fetch('https://api.etherscan.io/api?module=gastracker&action=gasoracle');
+                const data = await response.json();
+                if (data.result) {
+                    return {
+                        low: parseInt(data.result.SafeGasPrice),
+                        average: parseInt(data.result.ProposeGasPrice),
+                        high: parseInt(data.result.FastGasPrice)
+                    };
+                }
+            } catch (error) {
+                console.log('Etherscan API failed, trying alternative...');
+            }
+
+            try {
+                // Fallback to Blocknative API
+                const response = await fetch('https://api.blocknative.com/gasprices/blockprices', {
+                    headers: {
+                        'Authorization': ''  // No auth required for basic estimates
+                    }
+                });
+                const data = await response.json();
+                if (data.blockPrices && data.blockPrices[0]) {
+                    const estimates = data.blockPrices[0].estimatedPrices[0];
+                    return {
+                        low: Math.round(estimates.price * 0.8),
+                        average: Math.round(estimates.price),
+                        high: Math.round(estimates.price * 1.2)
+                    };
+                }
+            } catch (error) {
+                console.log('Blocknative API failed');
+            }
+
+            // If both APIs fail, use ethers.js as final fallback
+            const provider = new ethers.providers.JsonRpcProvider('https://eth-mainnet.public.blastapi.io');
+            const gasPrice = await provider.getGasPrice();
+            const gasPriceInGwei = Math.round(Number(ethers.utils.formatUnits(gasPrice, "gwei")));
+            return {
+                low: Math.max(1, Math.round(gasPriceInGwei * 0.8)),
+                average: gasPriceInGwei,
+                high: Math.round(gasPriceInGwei * 1.2)
+            };
+        }
+
+        // Get Block Number from multiple sources
+        async function getBlockNumber() {
+            const providers = [
+                'https://eth-mainnet.public.blastapi.io',
+                'https://rpc.ankr.com/eth',
+                'https://ethereum.publicnode.com',
+                'https://cloudflare-eth.com'
+            ];
+
+            for (const rpcUrl of providers) {
+                try {
+                    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+                    return await provider.getBlockNumber();
+                } catch (error) {
+                    console.log(`Failed to get block number from ${rpcUrl}`);
+                    continue;
+                }
+            }
+            throw new Error('Failed to get block number from all providers');
+        }
+
+        // Fetch all data concurrently
+        const [ethPrice, gasPrices, blockNumber] = await Promise.all([
+            getETHPrice(),
+            getGasPrices(),
+            getBlockNumber()
+        ]);
+
+        // Update UI with fetched data
+        if (ethPrice) {
+            document.getElementById('eth-price').textContent = `$${ethPrice.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        if (gasPrices) {
+            document.getElementById('gas-low').textContent = `${gasPrices.low} Gwei`;
+            document.getElementById('gas-avg').textContent = `${gasPrices.average} Gwei`;
+            document.getElementById('gas-high').textContent = `${gasPrices.high} Gwei`;
+        }
+
+        if (blockNumber) {
+            document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
+        }
+
+    } catch (error) {
+        console.error('Error updating market stats:', error);
+        // Keep the last successful values if available, otherwise show error state
+        const elements = ['eth-price', 'gas-low', 'gas-avg', 'gas-high', 'block-number'];
+        elements.forEach(id => {
+            const element = document.getElementById(id);
+            if (element.textContent === 'Loading...') {
+                element.textContent = '--';
+            }
+        });
+    }
+}
+
+// Initialize market stats
+async function initializeMarketStats() {
+    console.log('Initializing market statistics...');
+    try {
+        // Initial update
+        await updateMarketStats();
+        // Set up periodic updates
+        setInterval(updateMarketStats, 30000); // Update every 30 seconds
+    } catch (error) {
+        console.error('Failed to initialize market stats:', error);
+        // Retry initialization after 5 seconds
+        setTimeout(initializeMarketStats, 5000);
     }
 }
 
 // Start updates when the page is loaded
-window.addEventListener('load', async () => {
-    console.log('Starting market statistics updates...');
-    await waitForEthers();
-    updateMarketStats();
-    // Update market stats every 30 seconds
-    setInterval(updateMarketStats, 30000);
-});
+window.addEventListener('load', initializeMarketStats);
 
 // Add loading animation to market stats
 const marketCards = document.querySelectorAll('.market-card');
