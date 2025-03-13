@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Methachu</title>
+    <title>Harvest AI - KOL Tweet Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,268 +11,289 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-container">
-                <div class="logo-square">
-                    <div class="pikachu-ears">
-                        <div class="ear left"></div>
-                        <div class="ear right"></div>
-                    </div>
-                    <div class="pikachu-face">
-                        <div class="eyes">
-                            <div class="eye left"></div>
-                            <div class="eye right"></div>
+    <!-- Wallet Connection Overlay -->
+    <div id="wallet-overlay" class="wallet-overlay">
+        <div class="wallet-modal">
+            <div class="wallet-modal-header">
+                <div class="logo">
+                    <div class="logo-container">
+                        <div class="grass-blades">
+                            <span class="blade"></span>
+                            <span class="blade"></span>
+                            <span class="blade"></span>
                         </div>
-                        <div class="cheeks">
-                            <div class="cheek left"></div>
-                            <div class="cheek right"></div>
-                        </div>
-                        <div class="mouth"></div>
+                        <div class="harvest-circle"></div>
                     </div>
+                    <span class="logo-text">Harvest AI</span>
                 </div>
+                <h2>Connect Your Wallet</h2>
+                <p>Please connect your wallet to access the Harvest AI platform</p>
             </div>
-            <span class="logo-text">Metachu AI</span>
+            <div class="wallet-options">
+                <button id="connect-phantom" class="wallet-option">
+                    <img src="https://phantom.app/img/logo.png" alt="Phantom" class="wallet-logo">
+                    <span>Phantom (Solana)</span>
+                </button>
+                <button id="connect-metamask" class="wallet-option">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" class="wallet-logo">
+                    <span>MetaMask (Ethereum)</span>
+                </button>
+            </div>
+            <div class="wallet-footer">
+                <p>Don't have a wallet? <a href="https://phantom.app/" target="_blank">Get Phantom</a> or <a href="https://metamask.io/" target="_blank">Get MetaMask</a></p>
+            </div>
         </div>
-        <div class="nav-container">
-            <ul class="nav-links">
-                <li><a href="documentation.html">Documentation</a></li>
-                <li><a href="deployed-tokens.html">Deployed Tokens</a></li>
-            </ul>
-            <div class="social-icons">
-                <a href="#" class="social-icon">
-                    <i class="fa-brands fa-x-twitter"></i>
-                </a>
-                <a href="#" class="social-icon">
-                    <i class="fa-brands fa-telegram"></i>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-left">
+                <a href="#" class="navbar-brand">
+                    <div class="logo">
+                        <div class="logo-container">
+                            <div class="grass-blades">
+                                <span class="blade"></span>
+                                <span class="blade"></span>
+                                <span class="blade"></span>
+                            </div>
+                            <div class="harvest-circle"></div>
+                        </div>
+                        <span class="logo-text">Harvest AI</span>
+                    </div>
                 </a>
             </div>
-            <button id="connectWallet" class="wallet-button">
-                <span class="wallet-text">Connect Wallet</span>
-            </button>
+            <div class="nav-right">
+                <button class="menu-toggle">☰</button>
+                <div class="nav-links">
+                    <a href="#dashboard">Dashboard</a>
+                    <a href="#kol-list">KOL List</a>
+                    <a href="#settings">Settings</a>
+                </div>
+                <button class="wallet-button">
+                    <i class="fas fa-wallet"></i>
+                    <span class="wallet-text">Connect Wallet</span>
+                </button>
+            </div>
         </div>
     </nav>
 
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="animate-text">Welcome to Metachu AI!</h1>
-            <p class="animate-text-delay">Your AI-Powered Token Deployment Platform</p>
-            <p class="hero-description animate-text-delay">Experience the future of token creation with our advanced AI technology. Deploy secure, customizable ERC-20 tokens with automated smart contract generation, real-time market analysis, and built-in security features.</p>
+            <h1 class="animate-text">AI-Powered KOL Tweet Tracker</h1>
+            <p class="animate-text-delay">Automated Solana Trading Based on KOL Activity</p>
+            <p class="hero-description animate-text-delay">Track influential crypto personalities in real-time. Our AI analyzes tweets and automatically executes trades on Solana when potential opportunities are detected.</p>
             <div class="hero-features">
-                <span class="feature-tag">ERC-20</span>
-                <span class="feature-tag">Custom Tokens</span>
+                <span class="feature-tag">Real-time Tracking</span>
+                <span class="feature-tag">AI Analysis</span>
+                <span class="feature-tag">Auto Trading</span>
             </div>
             <div class="hero-highlights">
                 <div class="highlight-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Enhanced Security</span>
-                </div>
-                <div class="highlight-item">
                     <i class="fas fa-bolt"></i>
-                    <span>Instant Deployment</span>
+                    <span>Instant Execution</span>
                 </div>
                 <div class="highlight-item">
-                    <i class="fas fa-robot"></i>
-                    <span>AI-Powered</span>
+                    <i class="fas fa-brain"></i>
+                    <span>Smart Analysis</span>
                 </div>
-            </div>
-            <button class="cta-button">Deploy Your Token</button>
-        </div>
-    </section>
-
-    <!-- Token Deployment Form -->
-    <section id="deploy-token" class="deploy-token">
-        <div class="container">
-            <h2>Deploy Your Token</h2>
-            <div class="deployment-form">
-                <div class="form-grid">
-                    <!-- Token Basic Info -->
-                    <div class="form-section">
-                        <h3>Basic Information</h3>
-                        <div class="form-group">
-                            <label for="tokenName">Token Name</label>
-                            <input type="text" id="tokenName" placeholder="e.g., My Awesome Token" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tokenSymbol">Token Symbol</label>
-                            <input type="text" id="tokenSymbol" placeholder="e.g., MAT" maxlength="5" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tokenSupply">Initial Supply</label>
-                            <input type="number" id="tokenSupply" placeholder="e.g., 1000000" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tokenDecimals">Decimals</label>
-                            <input type="number" id="tokenDecimals" value="18" min="0" max="18" required>
-                        </div>
-                    </div>
-
-                    <!-- Token Features -->
-                    <div class="form-section">
-                        <h3>Token Features</h3>
-                        <div class="feature-toggles">
-                            <div class="toggle-group">
-                                <label class="toggle">
-                                    <input type="checkbox" id="mintable">
-                                    <span class="slider"></span>
-                                    Mintable
-                                </label>
-                                <div class="feature-info">Allow creation of new tokens</div>
-                            </div>
-                            <div class="toggle-group">
-                                <label class="toggle">
-                                    <input type="checkbox" id="burnable">
-                                    <span class="slider"></span>
-                                    Burnable
-                                </label>
-                                <div class="feature-info">Allow token destruction</div>
-                            </div>
-                            <div class="toggle-group">
-                                <label class="toggle">
-                                    <input type="checkbox" id="pausable">
-                                    <span class="slider"></span>
-                                    Pausable
-                                </label>
-                                <div class="feature-info">Ability to pause transfers</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Token Logo Generator -->
-                    <div class="form-section">
-                        <h3>Token Logo</h3>
-                        <div class="logo-generator">
-                            <div class="logo-preview">
-                                <img id="tokenLogo" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'/>">
-                            </div>
-                            
-                            <!-- AI Logo Chat Interface -->
-                            <div class="logo-chat">
-                                <div class="logo-chat-messages" id="logoChatMessages">
-                                    <div class="chat-message bot">
-                                        Hello! I'm your AI logo designer. Describe your ideal token logo and I'll help create it! 🎨
-                                    </div>
-                                </div>
-                                <div class="logo-chat-input">
-                                    <input type="text" id="logoChatInput" placeholder="Describe your logo idea...">
-                                    <button id="sendLogoPrompt">
-                                        <i class="fas fa-paper-plane"></i>
-                                    </button>
-                                </div>
-                                <div class="logo-suggestions">
-                                    <span class="logo-suggestion">Modern & Minimal</span>
-                                    <span class="logo-suggestion">Colorful & Fun</span>
-                                    <span class="logo-suggestion">Professional & Sleek</span>
-                                </div>
-                            </div>
-
-                            <div class="logo-controls">
-                                <button id="generateLogo" class="generate-logo-btn">
-                                    <i class="fas fa-magic"></i> Generate Logo
-                                </button>
-                                <div class="logo-style-options">
-                                    <select id="logoStyle">
-                                        <option value="abstract">Abstract</option>
-                                        <option value="geometric">Geometric</option>
-                                        <option value="minimalist">Minimalist</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Deployment Actions -->
-                <div class="deployment-actions">
-                    <button id="estimateGas" class="estimate-btn">
-                        <i class="fas fa-calculator"></i> Estimate Gas
-                    </button>
-                    <button id="deployToken" class="deploy-btn">
-                        <i class="fas fa-rocket"></i> Deploy Token
-                    </button>
-                </div>
-
-                <!-- Deployment Status -->
-                <div class="deployment-status" style="display: none;">
-                    <div class="status-spinner">
-                        <i class="fas fa-circle-notch fa-spin"></i>
-                    </div>
-                    <div class="status-message">Deploying your token...</div>
-                    <div class="status-details"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="features">
-        <div class="container">
-            <h2>Token Deployment Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
+                <div class="highlight-item">
                     <i class="fas fa-shield-alt"></i>
-                    <h3>Security First</h3>
-                    <ul class="feature-list">
-                        <li>Automated Audit Checks</li>
-                        <li>Reentrancy Protection</li>
-                        <li>Overflow Prevention</li>
-                        <li>Access Control</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-cogs"></i>
-                    <h3>Token Features</h3>
-                    <ul class="feature-list">
-                        <li>Mintable/Burnable</li>
-                        <li>Pausable Functions</li>
-                        <li>Transfer Limits</li>
-                        <li>Liquidity Locks</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-robot"></i>
-                    <h3>AI Capabilities</h3>
-                    <ul class="feature-list">
-                        <li>Smart Contract Generation</li>
-                        <li>Market Trend Analysis</li>
-                        <li>Gas Optimization</li>
-                        <li>Risk Assessment</li>
-                    </ul>
+                    <span>Risk Management</span>
                 </div>
             </div>
+            <button class="cta-button">Start Tracking</button>
         </div>
     </section>
 
-    <section id="market-stats" class="market-stats">
+    <!-- KOL Dashboard -->
+    <section id="dashboard" class="dashboard">
         <div class="container">
-            <h2>Live Market Statistics</h2>
-            <div class="stats-container">
-                <div class="market-card">
-                    <h3>Gas Tracker</h3>
-                    <div class="gas-stats">
-                        <div class="gas-item">
-                            <span class="label">Low</span>
-                            <span class="value" id="gas-low">-- Gwei</span>
+            <h2>Live KOL Activity</h2>
+            <div class="dashboard-grid">
+                <!-- Real-time Tracking Panel -->
+                <div class="tracking-panel">
+                    <h3>Active Tracking</h3>
+                    <div class="tracked-kols">
+                        <!-- KOL entries with real Twitter accounts -->
+                        <div class="kol-entry">
+                            <div class="kol-avatar">A</div>
+                            <div class="kol-info">
+                                <div class="kol-name">Anatoly Yakovenko</div>
+                                <div class="kol-handle">@aeyakovenko</div>
+                            </div>
+                            <div class="kol-status">
+                                <span class="status-indicator"></span>
+                                Active
+                            </div>
                         </div>
-                        <div class="gas-item">
-                            <span class="label">Average</span>
-                            <span class="value" id="gas-avg">-- Gwei</span>
+                        
+                        <div class="kol-entry">
+                            <div class="kol-avatar">R</div>
+                            <div class="kol-info">
+                                <div class="kol-name">Raj Gokal</div>
+                                <div class="kol-handle">@rajgokal</div>
+                            </div>
+                            <div class="kol-status">
+                                <span class="status-indicator"></span>
+                                Active
+                            </div>
                         </div>
-                        <div class="gas-item">
-                            <span class="label">High</span>
-                            <span class="value" id="gas-high">-- Gwei</span>
+                        
+                        <div class="kol-entry">
+                            <div class="kol-avatar">S</div>
+                            <div class="kol-info">
+                                <div class="kol-name">Solana</div>
+                                <div class="kol-handle">@solana</div>
+                            </div>
+                            <div class="kol-status">
+                                <span class="status-indicator"></span>
+                                Active
+                            </div>
+                        </div>
+                        
+                        <div class="kol-entry">
+                            <div class="kol-avatar">M</div>
+                            <div class="kol-info">
+                                <div class="kol-name">Magic Eden</div>
+                                <div class="kol-handle">@MagicEden</div>
+                            </div>
+                            <div class="kol-status">
+                                <span class="status-indicator offline"></span>
+                                Offline
+                            </div>
+                        </div>
+                        
+                        <div class="kol-entry">
+                            <div class="kol-avatar">T</div>
+                            <div class="kol-info">
+                                <div class="kol-name">Toly Lev</div>
+                                <div class="kol-handle">@tolylev</div>
+                            </div>
+                            <div class="kol-status">
+                                <span class="status-indicator offline"></span>
+                                Offline
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="market-card">
-                    <h3>Network Status</h3>
-                    <div class="network-stats">
-                        <div class="stat-row">
-                            <span class="label">ETH Price</span>
-                            <span class="value" id="eth-price">$--</span>
+
+                <!-- Recent Tweets Panel -->
+                <div class="tweets-panel">
+                    <h3>Recent Tweets</h3>
+                    <div class="tweet-list">
+                        <!-- Real tweets from Solana ecosystem accounts -->
+                        <div class="tweet">
+                            <div class="tweet-header">
+                                <div class="tweet-avatar">A</div>
+                                <div class="tweet-name">Anatoly Yakovenko</div>
+                                <div class="tweet-handle">@aeyakovenko</div>
+                                <div class="tweet-time">2m ago</div>
+                            </div>
+                            <div class="tweet-content">
+                                Solana's validator count is now over 2,000! Amazing to see the network growing stronger and more decentralized every day. #Solana $SOL
+                            </div>
+                            <div class="tweet-actions">
+                                <div class="tweet-action"><i class="far fa-heart"></i> 845</div>
+                                <div class="tweet-action"><i class="far fa-retweet"></i> 212</div>
+                                <div class="tweet-action"><i class="far fa-comment"></i> 58</div>
+                            </div>
                         </div>
-                        <div class="stat-row">
-                            <span class="label">Block Number</span>
-                            <span class="value" id="block-number">#--</span>
+                        
+                        <div class="tweet">
+                            <div class="tweet-header">
+                                <div class="tweet-avatar">S</div>
+                                <div class="tweet-name">Solana</div>
+                                <div class="tweet-handle">@solana</div>
+                                <div class="tweet-time">15m ago</div>
+                            </div>
+                            <div class="tweet-content">
+                                Solana ecosystem is thriving! 💚 Over 2,000 active developers building the future of web3. Check out the latest projects at https://solana.com/ecosystem #SolanaSummer
+                            </div>
+                            <div class="tweet-actions">
+                                <div class="tweet-action"><i class="far fa-heart"></i> 1.2K</div>
+                                <div class="tweet-action"><i class="far fa-retweet"></i> 423</div>
+                                <div class="tweet-action"><i class="far fa-comment"></i> 114</div>
+                            </div>
+                        </div>
+                        
+                        <div class="tweet">
+                            <div class="tweet-header">
+                                <div class="tweet-avatar">M</div>
+                                <div class="tweet-name">Magic Eden</div>
+                                <div class="tweet-handle">@MagicEden</div>
+                                <div class="tweet-time">32m ago</div>
+                            </div>
+                            <div class="tweet-content">
+                                Just launched: The new Magic Eden Launchpad for Solana NFTs! Creators can now easily launch their collections with our streamlined tools. Apply now at magiceden.io/launchpad #NFTs #Solana
+                            </div>
+                            <div class="tweet-actions">
+                                <div class="tweet-action"><i class="far fa-heart"></i> 756</div>
+                                <div class="tweet-action"><i class="far fa-retweet"></i> 189</div>
+                                <div class="tweet-action"><i class="far fa-comment"></i> 67</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trading Activity -->
+                <div class="trading-panel">
+                    <h3>Trading Activity</h3>
+                    <div class="trade-list">
+                        <!-- Real Solana token trades -->
+                        <div class="trade-entry">
+                            <div class="trade-header">
+                                <div class="trade-type buy">
+                                    <i class="fas fa-arrow-alt-circle-up"></i> Buy
+                                </div>
+                                <div class="trade-time">5m ago</div>
+                            </div>
+                            <div class="trade-details">
+                                <div class="trade-token">$SOL</div>
+                                <div class="trade-amount">2.5 SOL</div>
+                            </div>
+                            <div class="trade-status">Completed</div>
+                        </div>
+                        
+                        <div class="trade-entry">
+                            <div class="trade-header">
+                                <div class="trade-type sell">
+                                    <i class="fas fa-arrow-alt-circle-down"></i> Sell
+                                </div>
+                                <div class="trade-time">27m ago</div>
+                            </div>
+                            <div class="trade-details">
+                                <div class="trade-token">$BONK</div>
+                                <div class="trade-amount">1.2 SOL</div>
+                            </div>
+                            <div class="trade-status">Completed</div>
+                        </div>
+                        
+                        <div class="trade-entry">
+                            <div class="trade-header">
+                                <div class="trade-type buy">
+                                    <i class="fas fa-arrow-alt-circle-up"></i> Buy
+                                </div>
+                                <div class="trade-time">1h ago</div>
+                            </div>
+                            <div class="trade-details">
+                                <div class="trade-token">$JTO</div>
+                                <div class="trade-amount">0.8 SOL</div>
+                            </div>
+                            <div class="trade-status pending">Pending</div>
+                        </div>
+                        
+                        <div class="trade-entry">
+                            <div class="trade-header">
+                                <div class="trade-type buy">
+                                    <i class="fas fa-arrow-alt-circle-up"></i> Buy
+                                </div>
+                                <div class="trade-time">3h ago</div>
+                            </div>
+                            <div class="trade-details">
+                                <div class="trade-token">$PYTH</div>
+                                <div class="trade-amount">0.3 SOL</div>
+                            </div>
+                            <div class="trade-status failed">Failed</div>
                         </div>
                     </div>
                 </div>
@@ -280,93 +301,308 @@
         </div>
     </section>
 
-    <!-- Token Deployment Process -->
-    <section id="deployment-steps" class="deployment-steps">
+    <!-- KOL Management -->
+    <section id="kol-list" class="kol-management">
         <div class="container">
-            <h2>Token Deployment Process</h2>
-            <div class="steps-container">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Connect Wallet</h3>
-                    <p>Connect your MetaMask or other Web3 wallet to get started</p>
+            <h2>Manage KOL List</h2>
+            <div class="kol-controls">
+                <div class="search-box">
+                    <input type="text" placeholder="Search Twitter handle..." id="kolSearch">
+                    <button id="addKOL"><i class="fas fa-plus"></i> Add KOL</button>
                 </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>Configure Token</h3>
-                    <p>Set name, symbol, supply, and advanced features</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>AI Analysis</h3>
-                    <p>Our AI reviews and optimizes your token configuration</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">4</div>
-                    <h3>Deploy</h3>
-                    <p>One-click deployment to your chosen network</p>
+                
+                <!-- KOL Grid with sample cards -->
+                <div class="kol-grid">
+                    <!-- KOL Card 1 -->
+                    <div class="kol-card">
+                        <div class="kol-tracking-status active">
+                            <i class="fas fa-circle"></i> Active
+                        </div>
+                        <div class="kol-card-header">
+                            <div class="kol-card-avatar">S</div>
+                            <div class="kol-card-info">
+                                <div class="kol-card-name">SolanaWhale</div>
+                                <div class="kol-card-handle">
+                                    <i class="fab fa-twitter"></i> @solana_whale
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kol-card-body">
+                            <div class="kol-card-stats">
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">45K</div>
+                                    <div class="kol-stat-label">Followers</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">89%</div>
+                                    <div class="kol-stat-label">Accuracy</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">12</div>
+                                    <div class="kol-stat-label">Trades</div>
+                                </div>
+                            </div>
+                            <div class="kol-card-tags">
+                                <span class="kol-tag">Solana</span>
+                                <span class="kol-tag">DeFi</span>
+                                <span class="kol-tag">NFTs</span>
+                            </div>
+                            <div class="kol-card-actions">
+                                <button class="kol-action-btn secondary">
+                                    <i class="fas fa-chart-line"></i> View Stats
+                                </button>
+                                <button class="kol-action-btn danger">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KOL Card 2 -->
+                    <div class="kol-card">
+                        <div class="kol-tracking-status active">
+                            <i class="fas fa-circle"></i> Active
+                        </div>
+                        <div class="kol-card-header">
+                            <div class="kol-card-avatar">C</div>
+                            <div class="kol-card-info">
+                                <div class="kol-card-name">CryptoGems</div>
+                                <div class="kol-card-handle">
+                                    <i class="fab fa-twitter"></i> @gems_finder
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kol-card-body">
+                            <div class="kol-card-stats">
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">28K</div>
+                                    <div class="kol-stat-label">Followers</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">76%</div>
+                                    <div class="kol-stat-label">Accuracy</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">8</div>
+                                    <div class="kol-stat-label">Trades</div>
+                                </div>
+                            </div>
+                            <div class="kol-card-tags">
+                                <span class="kol-tag">Gems</span>
+                                <span class="kol-tag">Solana</span>
+                                <span class="kol-tag">Airdrops</span>
+                            </div>
+                            <div class="kol-card-actions">
+                                <button class="kol-action-btn secondary">
+                                    <i class="fas fa-chart-line"></i> View Stats
+                                </button>
+                                <button class="kol-action-btn danger">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- KOL Card 3 -->
+                    <div class="kol-card">
+                        <div class="kol-tracking-status inactive">
+                            <i class="fas fa-circle"></i> Inactive
+                        </div>
+                        <div class="kol-card-header">
+                            <div class="kol-card-avatar">A</div>
+                            <div class="kol-card-info">
+                                <div class="kol-card-name">Alpha Hunter</div>
+                                <div class="kol-card-handle">
+                                    <i class="fab fa-twitter"></i> @alpha_hunter
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kol-card-body">
+                            <div class="kol-card-stats">
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">15K</div>
+                                    <div class="kol-stat-label">Followers</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">92%</div>
+                                    <div class="kol-stat-label">Accuracy</div>
+                                </div>
+                                <div class="kol-stat">
+                                    <div class="kol-stat-value">5</div>
+                                    <div class="kol-stat-label">Trades</div>
+                                </div>
+                            </div>
+                            <div class="kol-card-tags">
+                                <span class="kol-tag">Alpha</span>
+                                <span class="kol-tag">Solana</span>
+                                <span class="kol-tag">Trading</span>
+                            </div>
+                            <div class="kol-card-actions">
+                                <button class="kol-action-btn primary">
+                                    <i class="fas fa-play"></i> Activate
+                                </button>
+                                <button class="kol-action-btn danger">
+                                    <i class="fas fa-times"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Empty state (hidden by default, will be shown when no KOLs are added) -->
+                    <div class="kol-empty-state" style="display: none;">
+                        <i class="fas fa-user-plus"></i>
+                        <h3>No KOLs Added Yet</h3>
+                        <p>Start by adding Twitter handles of Key Opinion Leaders (KOLs) in the Solana ecosystem to track their activity and get trading signals.</p>
+                        <button class="cta-button">
+                            <i class="fas fa-plus"></i> Add Your First KOL
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="about-us" class="about-us">
+    <!-- Settings Panel -->
+    <section id="settings" class="settings">
         <div class="container">
-            <h2>Our Powers</h2>
-            <div class="about-grid">
-                <div class="about-card">
-                    <h3>Electric Innovation</h3>
-                    <p>Sparking creative solutions for your needs</p>
+            <h2>Trading Settings</h2>
+            <div class="settings-grid">
+                <!-- Trading Parameters -->
+                <div class="settings-card">
+                    <h3>Trading Parameters</h3>
+                    <div class="form-group">
+                        <label>Maximum Trade Size (SOL)</label>
+                        <input type="number" id="maxTradeSize" min="0.1" step="0.1" value="1.0">
+                    </div>
+                    <div class="form-group">
+                        <label>Risk Level</label>
+                        <select id="riskLevel">
+                            <option value="conservative">Conservative</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="aggressive">Aggressive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Auto-Trading</label>
+                        <div class="toggle-group">
+                            <label class="toggle">
+                                <input type="checkbox" id="autoTrading" checked>
+                                <span class="slider"></span>
+                                Enable Auto-Trading
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div class="about-card">
-                    <h3>Thunder Quality</h3>
-                    <p>Striking excellence in every project</p>
+
+                <!-- AI Settings -->
+                <div class="settings-card">
+                    <h3>AI Analysis Settings</h3>
+                    <div class="form-group">
+                        <label>Sentiment Threshold (0-100)</label>
+                        <input type="range" id="sentimentThreshold" min="0" max="100" value="65">
+                        <div class="range-value">65</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Response Time (seconds)</label>
+                        <input type="number" id="responseTime" min="1" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Token Detection</label>
+                        <div class="toggle-group">
+                            <label class="toggle">
+                                <input type="checkbox" id="tokenDetection" checked>
+                                <span class="slider"></span>
+                                Auto-Detect Tokens
+                            </label>
+                        </div>
+                    </div>
                 </div>
-                <div class="about-card">
-                    <h3>Lightning Speed</h3>
-                    <p>Fast and powerful delivery</p>
+
+                <!-- Notification Settings -->
+                <div class="settings-card">
+                    <h3>Notifications</h3>
+                    <div class="toggle-group">
+                        <label class="toggle">
+                            <input type="checkbox" id="tweetAlerts" checked>
+                            <span class="slider"></span>
+                            Tweet Alerts
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label class="toggle">
+                            <input type="checkbox" id="tradeAlerts" checked>
+                            <span class="slider"></span>
+                            Trade Alerts
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <label class="toggle">
+                            <input type="checkbox" id="priceAlerts">
+                            <span class="slider"></span>
+                            Price Movement Alerts
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Alert Method</label>
+                        <select id="alertMethod">
+                            <option value="app">In-App Only</option>
+                            <option value="email">Email</option>
+                            <option value="both" selected>Both</option>
+                        </select>
+                    </div>
                 </div>
+            </div>
+            <div class="settings-actions">
+                <button class="save-settings">Save Settings</button>
+                <button class="reset-settings">Reset to Default</button>
             </div>
         </div>
     </section>
 
-    <!-- Chat Widget -->
-    <div class="chat-widget">
-        <div class="chat-header">
-            <i class="fas fa-robot"></i>
-            <span>AI Assistant</span>
-        </div>
-        <div class="chat-body">
-            <div class="chat-message bot">
-                Hello! I'm your AI assistant. How can I help you with token deployment today? 🤖
+    <!-- Activity Monitor -->
+    <div class="ai-chatbot">
+        <div class="chatbot-header">
+            <div class="chatbot-title">
+                <i class="fas fa-robot"></i>
+                <span>Harvest AI Assistant</span>
+            </div>
+            <div class="chatbot-status">
+                <span class="status-dot"></span>
+                <span class="status-text">Online</span>
             </div>
         </div>
-        <div class="chat-suggestions">
-            <span class="chat-suggestion">Deploy new token</span>
-            <span class="chat-suggestion">Token features</span>
-            <span class="chat-suggestion">Security check</span>
-        </div>
-        <div class="chat-input-container">
-            <input type="text" class="chat-input" placeholder="Type your message...">
-            <button class="chat-send-btn">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+        <div class="chatbot-body">
+            <div class="chat-messages">
+                <!-- Initial welcome message -->
+                <div class="chat-message bot">
+                    <div class="message-content">
+                        👋 Hi! I'm your Harvest AI assistant. I can help you with:
+                        <ul class="bot-features">
+                            <li>🔥 Trending KOLs on Solana</li>
+                            <li>📈 Hot token movements</li>
+                            <li>💡 Market sentiment analysis</li>
+                        </ul>
+                        Ask me anything about Solana trends!
+                    </div>
+                </div>
+            </div>
+            <div class="chat-suggestions">
+                <button class="suggestion-chip">Show top KOLs</button>
+                <button class="suggestion-chip">Token trends</button>
+                <button class="suggestion-chip">Latest alpha</button>
+            </div>
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" placeholder="Ask about Solana trends...">
+                <button class="chat-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Primary ethers.js source -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
-    <!-- Fallback ethers.js source -->
-    <script>
-        if (!window.ethers) {
-            console.log('Primary ethers.js failed to load, trying fallback...');
-            const fallbackScript = document.createElement('script');
-            fallbackScript.src = 'https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js';
-            document.body.appendChild(fallbackScript);
-        }
-    </script>
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/solana-web3.js/1.87.6/solana-web3.min.js"></script>
     <script src="script.js"></script>
-    <!-- Custom Cursor Elements -->
-    <div class="cursor-dot"></div>
-    <div class="custom-cursor"></div>
+    <script src="dashboard.js"></script>
 </body>
 </html> 

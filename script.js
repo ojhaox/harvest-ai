@@ -22,102 +22,343 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeWalletConnection();
     initializeChat();
 
-    // Custom cursor elements
-    const cursor = document.querySelector('.custom-cursor');
-    const cursorDot = document.querySelector('.cursor-dot');
+    // Remove custom cursor initialization
+    // Only initialize cursor if not on mobile
+    if (window.innerWidth > 768) {
+        // Remove cursor-related code
+    }
+
+    // Initialize other features
+    initializeMobileMenu();
+    updateLogoChatPosition();
     
-    // Set cursor styles
-    if (cursor) {
-        cursor.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';  // Semi-transparent black
-        cursor.style.border = '1px solid rgba(0, 0, 0, 0.5)';  // Darker black border
-    }
+    // Update logo chat position on window resize
+    window.addEventListener('resize', updateLogoChatPosition);
     
-    if (cursorDot) {
-        cursorDot.style.backgroundColor = '#000000';  // Solid black for the dot
-    }
-
-    // Track mouse position
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-    let dotX = 0;
-    let dotY = 0;
-
-    // Mouse move handler
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-
-        // Add hover trail effect
-        createTrailEffect(e.clientX, e.clientY);
-    });
-
-    // Smooth cursor animation
-    function updateCursor() {
-        if (cursor && cursorDot) {
-            // Smooth cursor following
-            const deltaX = mouseX - cursorX;
-            const deltaY = mouseY - cursorY;
-            cursorX += deltaX * 0.2;
-            cursorY += deltaY * 0.2;
-            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
-
-            // Faster dot following
-            const dotDeltaX = mouseX - dotX;
-            const dotDeltaY = mouseY - dotY;
-            dotX += dotDeltaX * 0.5;
-            dotY += dotDeltaY * 0.5;
-            cursorDot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
-        }
-        requestAnimationFrame(updateCursor);
-    }
-    updateCursor();
-
-    // Add hover effects for interactive elements
-    const interactiveElements = document.querySelectorAll(`
-        .wallet-button, .cta-button, .feature-card,
-        .market-card, .step-card, .about-card,
-        .social-icon, .chat-widget, .generate-logo-btn,
-        .deploy-btn, .estimate-btn, a, button, input,
-        .toggle, .chat-suggestion
-    `);
-
-    interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            if (cursor && cursorDot) {
-                cursor.style.transform = 'scale(1.5)';
-                cursorDot.style.transform = 'scale(0.5)';
-            }
-        });
-
-        element.addEventListener('mouseleave', () => {
-            if (cursor && cursorDot) {
-                cursor.style.transform = 'scale(1)';
-                cursorDot.style.transform = 'scale(1)';
-            }
-        });
-    });
-
-    // Trail effect
-    function createTrailEffect(x, y) {
-        const trail = document.createElement('div');
-        trail.className = 'tech-trail';
-        trail.style.left = x + 'px';
-        trail.style.top = y + 'px';
-        trail.style.position = 'fixed';
-        trail.style.pointerEvents = 'none';
-        trail.style.width = '4px';
-        trail.style.height = '4px';
-        trail.style.backgroundColor = '#000000';  // Changed to black
-        trail.style.borderRadius = '50%';
-        trail.style.opacity = '0.3';  // Reduced opacity for better visibility
-        trail.style.animation = 'techTrailFade 0.5s ease-out forwards';
-        
-        document.body.appendChild(trail);
-        setTimeout(() => trail.remove(), 500);
-    }
+    // Check if wallet is already connected
+    checkWalletConnection();
 });
+
+// Wallet connection state
+let walletConnected = false;
+let walletType = null; // 'phantom' or 'metamask'
+let walletAddress = null;
+
+// Make wallet connection state and functions available globally
+window.walletConnected = walletConnected;
+window.showWalletOverlay = showWalletOverlay;
+window.showNotification = showNotification;
+
+// Check if wallet is already connected
+function checkWalletConnection() {
+    // Check localStorage for saved connection
+    const savedWallet = localStorage.getItem('harvestWallet');
+    
+    if (savedWallet) {
+        const walletData = JSON.parse(savedWallet);
+        walletType = walletData.type;
+        walletAddress = walletData.address;
+        
+        // Verify the connection is still active
+        if (walletType === 'phantom') {
+            verifyPhantomConnection();
+        } else if (walletType === 'metamask') {
+            verifyMetamaskConnection();
+        }
+    } else {
+        // Show wallet overlay if no connection found
+        showWalletOverlay();
+    }
+}
+
+// Verify Phantom connection
+async function verifyPhantomConnection() {
+    if (window.solana && window.solana.isPhantom) {
+        try {
+            // Check if already connected
+            const response = await window.solana.connect({ onlyIfTrusted: true });
+            walletAddress = response.publicKey.toString();
+            walletConnected = true;
+            walletType = 'phantom';
+            
+            // Save connection
+            saveWalletConnection();
+            
+            // Update UI
+            updateWalletUI();
+            hideWalletOverlay();
+        } catch (error) {
+            console.log('Phantom not connected:', error);
+            showWalletOverlay();
+        }
+    } else {
+        showWalletOverlay();
+    }
+}
+
+// Verify Metamask connection
+async function verifyMetamaskConnection() {
+    if (window.ethereum) {
+        try {
+            // Check if already connected
+            const accounts = await window.ethereum.request({ 
+                method: 'eth_accounts' 
+            });
+            
+            if (accounts.length > 0) {
+                walletAddress = accounts[0];
+                walletConnected = true;
+                walletType = 'metamask';
+                
+                // Save connection
+                saveWalletConnection();
+                
+                // Update UI
+                updateWalletUI();
+                hideWalletOverlay();
+            } else {
+                showWalletOverlay();
+            }
+        } catch (error) {
+            console.log('Metamask not connected:', error);
+            showWalletOverlay();
+        }
+    } else {
+        showWalletOverlay();
+    }
+}
+
+// Save wallet connection to localStorage
+function saveWalletConnection() {
+    const walletData = {
+        type: walletType,
+        address: walletAddress
+    };
+    
+    localStorage.setItem('harvestWallet', JSON.stringify(walletData));
+    
+    // Update global state
+    window.walletConnected = walletConnected;
+}
+
+// Show wallet overlay
+function showWalletOverlay() {
+    const overlay = document.getElementById('wallet-overlay');
+    if (overlay) {
+        overlay.classList.remove('hidden');
+    }
+}
+
+// Hide wallet overlay
+function hideWalletOverlay() {
+    const overlay = document.getElementById('wallet-overlay');
+    if (overlay) {
+        overlay.classList.add('hidden');
+    }
+}
+
+// Wallet connection initialization
+function initializeWalletConnection() {
+    // Connect wallet button in navbar
+    const walletButton = document.querySelector('.wallet-button');
+    if (walletButton) {
+        walletButton.addEventListener('click', handleWalletButtonClick);
+    }
+    
+    // Phantom wallet connection
+    const phantomButton = document.getElementById('connect-phantom');
+    if (phantomButton) {
+        phantomButton.addEventListener('click', connectPhantomWallet);
+    }
+    
+    // Metamask wallet connection
+    const metamaskButton = document.getElementById('connect-metamask');
+    if (metamaskButton) {
+        metamaskButton.addEventListener('click', connectMetamaskWallet);
+    }
+}
+
+// Handle wallet button click
+function handleWalletButtonClick() {
+    if (walletConnected) {
+        // If already connected, show disconnect option
+        if (confirm('Do you want to disconnect your wallet?')) {
+            disconnectWallet();
+        }
+    } else {
+        // If not connected, show connection overlay
+        showWalletOverlay();
+    }
+}
+
+// Connect Phantom wallet
+async function connectPhantomWallet() {
+    if (!window.solana) {
+        // Phantom not installed
+        if (confirm('Phantom wallet is not installed. Would you like to install it now?')) {
+            window.open('https://phantom.app/', '_blank');
+        }
+        return;
+    }
+    
+    try {
+        const response = await window.solana.connect();
+        walletAddress = response.publicKey.toString();
+        walletConnected = true;
+        walletType = 'phantom';
+        
+        // Save connection
+        saveWalletConnection();
+        
+        // Update UI
+        updateWalletUI();
+        hideWalletOverlay();
+        
+        // Show success notification
+        showNotification('Phantom wallet connected successfully!', 'success');
+    } catch (error) {
+        console.error('Error connecting Phantom wallet:', error);
+        showNotification('Failed to connect Phantom wallet. Please try again.', 'error');
+    }
+}
+
+// Connect Metamask wallet
+async function connectMetamaskWallet() {
+    if (!window.ethereum) {
+        // Metamask not installed
+        if (confirm('MetaMask is not installed. Would you like to install it now?')) {
+            window.open('https://metamask.io/', '_blank');
+        }
+        return;
+    }
+    
+    try {
+        const accounts = await window.ethereum.request({ 
+            method: 'eth_requestAccounts' 
+        });
+        
+        walletAddress = accounts[0];
+        walletConnected = true;
+        walletType = 'metamask';
+        
+        // Save connection
+        saveWalletConnection();
+        
+        // Update UI
+        updateWalletUI();
+        hideWalletOverlay();
+        
+        // Show success notification
+        showNotification('MetaMask wallet connected successfully!', 'success');
+        
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+    } catch (error) {
+        console.error('Error connecting MetaMask wallet:', error);
+        showNotification('Failed to connect MetaMask wallet. Please try again.', 'error');
+    }
+}
+
+// Handle account changes in Metamask
+function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+        // User disconnected their wallet
+        disconnectWallet();
+    } else {
+        // User switched accounts
+        walletAddress = accounts[0];
+        saveWalletConnection();
+        updateWalletUI();
+    }
+}
+
+// Disconnect wallet
+function disconnectWallet() {
+    walletConnected = false;
+    walletType = null;
+    walletAddress = null;
+    
+    // Remove from localStorage
+    localStorage.removeItem('harvestWallet');
+    
+    // Update global state
+    window.walletConnected = false;
+    
+    // Update UI
+    updateWalletUI();
+    
+    // Show wallet overlay
+    showWalletOverlay();
+    
+    // Show notification
+    showNotification('Wallet disconnected', 'info');
+}
+
+// Update wallet UI
+function updateWalletUI() {
+    const walletBtn = document.querySelector('.wallet-button');
+    const walletText = walletBtn.querySelector('.wallet-text');
+    
+    if (walletConnected && walletAddress) {
+        walletBtn.classList.add('connected');
+        // Format address for display (first 4 and last 4 characters)
+        const shortAddress = `${walletAddress.slice(0, 4)}...${walletAddress.slice(-4)}`;
+        walletText.textContent = shortAddress;
+    } else {
+        walletBtn.classList.remove('connected');
+        walletText.textContent = 'Connect Wallet';
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    // Create notification element if it doesn't exist
+    let notification = document.querySelector('.notification');
+    
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        document.body.appendChild(notification);
+    } else {
+        // Update class for type
+        notification.className = `notification ${type}`;
+    }
+    
+    // Set content
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="notification-title">
+                ${type === 'success' ? 'Success' : type === 'error' ? 'Error' : 'Information'}
+            </div>
+            <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close">&times;</button>
+    `;
+    
+    // Show notification
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+    
+    // Close button functionality
+    const closeBtn = notification.querySelector('.notification-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        });
+    }
+}
 
 // Navbar initialization
 function initializeNavbar() {
@@ -178,48 +419,6 @@ function initializeCTAButton() {
         });
     }
 }
-
-// Wallet connection initialization
-function initializeWalletConnection() {
-    const connectButton = document.getElementById('connectWallet');
-    if (connectButton) {
-        connectButton.addEventListener('click', connectWallet);
-    }
-}
-
-// MetaMask Connection
-const connectWallet = async () => {
-    const connectButton = document.getElementById('connectWallet');
-    const walletText = connectButton.querySelector('.wallet-text');
-
-    // Check if MetaMask is installed
-    if (typeof window.ethereum !== 'undefined') {
-        try {
-            // Request account access
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            // Update button state
-            connectButton.classList.add('connected');
-            walletText.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
-            
-            // Listen for account changes
-            window.ethereum.on('accountsChanged', function (accounts) {
-                if (accounts.length > 0) {
-                    walletText.textContent = `${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`;
-                } else {
-                    connectButton.classList.remove('connected');
-                    walletText.textContent = 'Connect Wallet';
-                }
-            });
-
-        } catch (error) {
-            console.error('User denied account access');
-            walletText.textContent = 'Connect Wallet';
-        }
-    } else {
-        alert('Please install MetaMask!');
-    }
-};
 
 // AI Chatbot Functionality
 function initializeChat() {
@@ -683,4 +882,485 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1500);
         }
     });
+});
+
+// Mobile Menu Toggle
+function initializeMobileMenu() {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.textContent = navLinks.classList.contains('active') ? '×' : '☰';
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
+                navLinks.classList.remove('active');
+                menuToggle.textContent = '☰';
+            }
+        });
+
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.textContent = '☰';
+            });
+        });
+    }
+}
+
+// Update logo chat positioning for mobile
+function updateLogoChatPosition() {
+    const logoChatContainer = document.querySelector('.logo-chat');
+    if (logoChatContainer) {
+        if (window.innerWidth <= 768) {
+            logoChatContainer.style.position = 'fixed';
+            logoChatContainer.style.bottom = '20px';
+            logoChatContainer.style.right = '20px';
+            logoChatContainer.style.width = '90%';
+            logoChatContainer.style.maxWidth = '400px';
+            logoChatContainer.style.maxHeight = '80vh';
+        } else {
+            logoChatContainer.style.position = 'fixed';
+            logoChatContainer.style.right = '30px';
+            logoChatContainer.style.top = '100px';
+            logoChatContainer.style.width = '400px';
+            logoChatContainer.style.maxWidth = '90vw';
+        }
+    }
+}
+
+// Constants
+const TWITTER_API_ENDPOINT = 'https://api.twitter.com/2';
+const SOLANA_NETWORK = 'mainnet-beta';
+const JUPITER_API_ENDPOINT = 'https://quote-api.jup.ag/v6';
+
+// State Management
+let trackedKOLs = new Map();
+let activeTraders = new Set();
+let sentimentThreshold = 75;
+let maxTradeSize = 1; // in SOL
+let riskLevel = 'moderate';
+let connection;
+let wallet;
+
+// Initialize Solana Connection
+async function initializeSolana() {
+    try {
+        connection = new solanaWeb3.Connection(
+            solanaWeb3.clusterApiUrl(SOLANA_NETWORK),
+            'confirmed'
+        );
+        console.log('Solana connection established');
+    } catch (error) {
+        console.error('Failed to initialize Solana connection:', error);
+    }
+}
+
+// KOL Management
+async function addKOL(twitterHandle) {
+    if (!twitterHandle) return;
+    
+    // Check if wallet is connected
+    if (!walletConnected) {
+        showNotification('Please connect your wallet to manage KOLs', 'error');
+        showWalletOverlay();
+        return;
+    }
+    
+    try {
+        const userData = await fetchTwitterUserData(twitterHandle);
+        trackedKOLs.set(userData.id, {
+            handle: twitterHandle,
+            lastTweetId: null,
+            active: true,
+            sentiment: 0
+        });
+        updateKOLUI();
+        startTracking(userData.id);
+        
+        // Show success notification
+        showNotification(`Added ${twitterHandle} to your KOL list`, 'success');
+    } catch (error) {
+        console.error('Error adding KOL:', error);
+        showNotification(`Failed to add KOL: ${error.message}`, 'error');
+    }
+}
+
+async function removeKOL(userId) {
+    // Check if wallet is connected
+    if (!walletConnected) {
+        showNotification('Please connect your wallet to manage KOLs', 'error');
+        showWalletOverlay();
+        return;
+    }
+    
+    trackedKOLs.delete(userId);
+    updateKOLUI();
+    
+    // Show notification
+    showNotification('KOL removed from your tracking list', 'info');
+}
+
+// Tweet Monitoring
+async function startTracking(userId) {
+    if (!trackedKOLs.has(userId)) return;
+    
+    setInterval(async () => {
+        try {
+            const tweets = await fetchLatestTweets(userId);
+            if (tweets.length > 0) {
+                processTweets(tweets, userId);
+            }
+        } catch (error) {
+            console.error('Error fetching tweets:', error);
+        }
+    }, 30000); // Check every 30 seconds
+}
+
+async function processTweets(tweets, userId) {
+    const kol = trackedKOLs.get(userId);
+    if (!kol) return;
+
+    for (const tweet of tweets) {
+        if (kol.lastTweetId && tweet.id <= kol.lastTweetId) continue;
+
+        const sentiment = await analyzeTweetSentiment(tweet.text);
+        if (sentiment >= sentimentThreshold) {
+            const tokens = extractTokenMentions(tweet.text);
+            for (const token of tokens) {
+                if (validateToken(token)) {
+                    executeTrade(token);
+                }
+            }
+        }
+
+        kol.lastTweetId = tweet.id;
+        updateTweetUI(tweet, sentiment);
+    }
+}
+
+// Sentiment Analysis
+async function analyzeTweetSentiment(text) {
+    // Implement sentiment analysis using AI/ML
+    // This is a placeholder - you would typically use a service like OpenAI or your own model
+    return new Promise((resolve) => {
+        // Simulate sentiment analysis
+        const sentiment = Math.random() * 100;
+        resolve(sentiment);
+    });
+}
+
+// Token Validation and Trading
+function validateToken(token) {
+    // Implement token validation logic
+    // Check if token exists on Solana
+    // Verify liquidity, market cap, etc.
+    return true;
+}
+
+async function executeTrade(token) {
+    if (!walletConnected) {
+        showNotification('Please connect your wallet to execute trades', 'error');
+        showWalletOverlay();
+        return;
+    }
+
+    try {
+        // Get best route from Jupiter aggregator
+        const route = await getJupiterRoute(token);
+        if (!route) return;
+
+        // Execute the trade
+        const signature = await sendTransaction(route);
+        if (signature) {
+            updateTradeUI({
+                token,
+                amount: route.amount,
+                timestamp: Date.now(),
+                status: 'success',
+                txId: signature
+            });
+            
+            // Show success notification
+            showNotification(`Successfully executed trade for ${token}`, 'success');
+        }
+    } catch (error) {
+        console.error('Trade execution failed:', error);
+        updateTradeUI({
+            token,
+            timestamp: Date.now(),
+            status: 'failed',
+            error: error.message
+        });
+        
+        // Show error notification
+        showNotification(`Trade failed: ${error.message}`, 'error');
+    }
+}
+
+// Jupiter Integration
+async function getJupiterRoute(token) {
+    try {
+        const response = await fetch(`${JUPITER_API_ENDPOINT}/quote`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                inputMint: 'SOL',
+                outputMint: token,
+                amount: maxTradeSize * 1e9, // Convert to lamports
+                slippageBps: 50,
+            }),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error getting Jupiter route:', error);
+        return null;
+    }
+}
+
+// UI Updates
+function updateKOLUI() {
+    const kolContainer = document.querySelector('.tracked-kols');
+    kolContainer.innerHTML = '';
+
+    trackedKOLs.forEach((kol, userId) => {
+        const kolElement = document.createElement('div');
+        kolElement.className = 'kol-item';
+        kolElement.innerHTML = `
+            <span class="kol-handle">@${kol.handle}</span>
+            <span class="kol-status ${kol.active ? 'active' : 'inactive'}">
+                ${kol.active ? 'Tracking' : 'Paused'}
+            </span>
+            <button class="remove-kol" data-id="${userId}">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        kolContainer.appendChild(kolElement);
+    });
+}
+
+function updateTweetUI(tweet, sentiment) {
+    const tweetList = document.querySelector('.tweet-list');
+    const tweetElement = document.createElement('div');
+    tweetElement.className = 'tweet-item';
+    tweetElement.innerHTML = `
+        <div class="tweet-header">
+            <span class="tweet-author">@${tweet.author}</span>
+            <span class="tweet-time">${new Date(tweet.created_at).toLocaleTimeString()}</span>
+        </div>
+        <div class="tweet-content">${tweet.text}</div>
+        <div class="tweet-sentiment" style="color: ${sentiment >= sentimentThreshold ? 'green' : 'inherit'}">
+            Sentiment: ${sentiment.toFixed(1)}%
+        </div>
+    `;
+    tweetList.insertBefore(tweetElement, tweetList.firstChild);
+}
+
+function updateTradeUI(trade) {
+    const tradeList = document.querySelector('.trade-list');
+    const tradeElement = document.createElement('div');
+    tradeElement.className = `trade-item ${trade.status}`;
+    tradeElement.innerHTML = `
+        <div class="trade-header">
+            <span class="trade-token">${trade.token}</span>
+            <span class="trade-time">${new Date(trade.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <div class="trade-details">
+            ${trade.status === 'success' 
+                ? `Amount: ${trade.amount} SOL<br>TX: ${trade.txId.slice(0, 8)}...`
+                : `Failed: ${trade.error}`
+            }
+        </div>
+    `;
+    tradeList.insertBefore(tradeElement, tradeList.firstChild);
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    initializeSolana();
+
+    // Add KOL
+    document.getElementById('addKOL').addEventListener('click', () => {
+        const handle = document.getElementById('kolSearch').value.trim();
+        if (handle) {
+            addKOL(handle);
+            document.getElementById('kolSearch').value = '';
+        }
+    });
+
+    // Settings
+    document.getElementById('maxTradeSize').addEventListener('change', (e) => {
+        maxTradeSize = parseFloat(e.target.value);
+    });
+
+    document.getElementById('riskLevel').addEventListener('change', (e) => {
+        riskLevel = e.target.value;
+    });
+
+    document.getElementById('sentimentThreshold').addEventListener('input', (e) => {
+        sentimentThreshold = parseInt(e.target.value);
+    });
+
+    // Remove KOL event delegation
+    document.querySelector('.tracked-kols').addEventListener('click', (e) => {
+        if (e.target.closest('.remove-kol')) {
+            const userId = e.target.closest('.remove-kol').dataset.id;
+            removeKOL(userId);
+        }
+    });
+});
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Mobile menu toggle
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (menuToggle) {
+        menuToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+        });
+    }
+    
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (navLinks && navLinks.classList.contains('active') && 
+            !event.target.closest('.nav-links') && 
+            !event.target.closest('.menu-toggle')) {
+            navLinks.classList.remove('active');
+        }
+    });
+    
+    // Chatbot toggle functionality
+    const chatbotHeader = document.querySelector('.chatbot-header');
+    const aiChatbot = document.querySelector('.ai-chatbot');
+    
+    if (chatbotHeader && aiChatbot) {
+        // Start with chatbot collapsed on mobile
+        if (window.innerWidth <= 768) {
+            aiChatbot.classList.add('collapsed');
+        }
+        
+        chatbotHeader.addEventListener('click', function() {
+            aiChatbot.classList.toggle('collapsed');
+        });
+    }
+    
+    // Handle suggestion chips
+    const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    const chatInput = document.querySelector('.chat-input');
+    const chatMessages = document.querySelector('.chat-messages');
+    const chatSend = document.querySelector('.chat-send');
+    
+    if (suggestionChips.length > 0 && chatInput && chatMessages) {
+        suggestionChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const query = this.textContent;
+                
+                // Add user message
+                addMessage('user', query);
+                
+                // Simulate AI response based on the query
+                setTimeout(() => {
+                    let response = '';
+                    
+                    if (query.includes('KOL')) {
+                        response = `<p>Here are the trending KOLs on Solana right now:</p>
+                        <ul>
+                            <li>@SolanaLegend - 15 mentions in the last hour</li>
+                            <li>@SolanaWhale - Just tweeted about a new project</li>
+                            <li>@DefiGuru - High engagement on recent posts</li>
+                        </ul>
+                        <p>Would you like to track any of these KOLs?</p>`;
+                    } else if (query.includes('token') || query.includes('trend')) {
+                        response = `<p>Top trending tokens on Solana in the last 24 hours:</p>
+                        <ul>
+                            <li>SOL - Up 5.2% with increasing volume</li>
+                            <li>BONK - Trending with 15% increase</li>
+                            <li>JTO - New listing gaining traction</li>
+                        </ul>
+                        <p>The overall market sentiment is bullish.</p>`;
+                    } else if (query.includes('alpha')) {
+                        response = `<p>Latest alpha from Solana ecosystem:</p>
+                        <ul>
+                            <li>New DEX launching next week</li>
+                            <li>Major partnership announcement expected soon</li>
+                            <li>Upcoming token airdrop for early adopters</li>
+                        </ul>
+                        <p>Would you like more specific details on any of these?</p>`;
+                    } else {
+                        response = "I'm here to help with information about Solana KOLs and token trends. What would you like to know?";
+                    }
+                    
+                    addMessage('bot', response);
+                }, 1000);
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Expand chatbot if collapsed
+                if (aiChatbot.classList.contains('collapsed')) {
+                    aiChatbot.classList.remove('collapsed');
+                }
+            });
+        });
+        
+        // Handle send button
+        if (chatSend) {
+            chatSend.addEventListener('click', sendMessage);
+        }
+        
+        // Handle enter key in input
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage('user', message);
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Simulate AI thinking
+                setTimeout(() => {
+                    addMessage('bot', "I'm analyzing the Solana ecosystem for relevant information. One moment please...");
+                    
+                    // Simulate AI response after "thinking"
+                    setTimeout(() => {
+                        let response = "Based on my analysis of recent Solana activity, I've found some interesting trends. KOLs are discussing DeFi projects more frequently, and there's growing interest in NFT marketplaces. Would you like more specific information about any particular aspect?";
+                        addMessage('bot', response);
+                    }, 2000);
+                }, 1000);
+            }
+        }
+        
+        function addMessage(type, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', type);
+            
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            messageContent.innerHTML = content;
+            
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
 });
