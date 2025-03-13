@@ -157,37 +157,56 @@ class WalletManager {
                 return;
             }
 
-            // Force disconnect first to ensure fresh connection
-            try {
-                await provider.disconnect();
-            } catch (e) {
-                // Ignore disconnect errors
+            // Don't force disconnect - let user manage their connection state
+            if (provider.isConnected) {
+                try {
+                    await provider.disconnect();
+                } catch (e) {
+                    // Ignore disconnect errors
+                }
             }
 
-            // Request new connection - this will trigger the popup
-            const resp = await provider.connect();
-            
-            // Handle successful connection
-            window.walletAddress = resp.publicKey.toString();
-            window.walletConnected = true;
-            
-            // Update UI
-            this.updateWalletUI(true);
-            await this.updateBalance();
-            
-            // Set up balance refresh interval
-            if (connectionInterval) clearInterval(connectionInterval);
-            connectionInterval = setInterval(() => this.updateBalance(), 30000);
-            
-            // Show success message
-            setTimeout(() => {
-                window.showNotification('Wallet connected successfully!', 'success');
-            }, 0);
-            
-            // Dispatch wallet connected event
-            document.dispatchEvent(new CustomEvent('walletConnected', {
-                detail: { address: window.walletAddress }
-            }));
+            try {
+                // Request new connection - this will trigger the popup
+                const resp = await provider.connect({
+                    onlyIfTrusted: false // Force the popup to appear
+                });
+                
+                // Handle successful connection
+                window.walletAddress = resp.publicKey.toString();
+                window.walletConnected = true;
+                
+                // Update UI
+                this.updateWalletUI(true);
+                await this.updateBalance();
+                
+                // Set up balance refresh interval
+                if (connectionInterval) clearInterval(connectionInterval);
+                connectionInterval = setInterval(() => this.updateBalance(), 30000);
+                
+                // Show success message
+                setTimeout(() => {
+                    window.showNotification('Wallet connected successfully!', 'success');
+                }, 0);
+                
+                // Dispatch wallet connected event
+                document.dispatchEvent(new CustomEvent('walletConnected', {
+                    detail: { address: window.walletAddress }
+                }));
+
+            } catch (error) {
+                if (error.code === 4001) {
+                    // User rejected the connection
+                    setTimeout(() => {
+                        window.showNotification('Wallet connection was rejected by user', 'info');
+                    }, 0);
+                } else {
+                    console.error('Phantom connection error:', error);
+                    setTimeout(() => {
+                        window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+                    }, 0);
+                }
+            }
 
         } catch (error) {
             console.error('Phantom connection error:', error);
@@ -210,48 +229,52 @@ class WalletManager {
                 return;
             }
 
-            // Force disconnect by clearing any existing connections
             try {
-                await provider.request({
-                    method: 'wallet_requestPermissions',
-                    params: [{ eth_accounts: {} }]
+                // Request new account access - this will trigger the popup
+                const accounts = await provider.request({
+                    method: 'eth_requestAccounts'
                 });
-            } catch (e) {
-                // Ignore permission request errors
-            }
-
-            // Request new account access - this will trigger the popup
-            const accounts = await provider.request({
-                method: 'eth_requestAccounts',
-                params: []
-            });
-            
-            if (!accounts || accounts.length === 0) {
-                throw new Error('No accounts returned from MetaMask');
-            }
-            
-            // Handle successful connection
-            window.walletAddress = accounts[0];
-            window.walletConnected = true;
-            this.updateWalletUI(true);
-            setTimeout(() => {
-                window.showNotification('Wallet connected successfully!', 'success');
-            }, 0);
-            
-            // Dispatch wallet connected event
-            document.dispatchEvent(new CustomEvent('walletConnected', {
-                detail: { address: window.walletAddress }
-            }));
-
-            // Listen for account changes
-            provider.on('accountsChanged', (accounts) => {
-                if (accounts.length === 0) {
-                    this.disconnectWallet();
-                } else {
-                    window.walletAddress = accounts[0];
-                    this.updateWalletUI(true);
+                
+                if (!accounts || accounts.length === 0) {
+                    throw new Error('No accounts returned from MetaMask');
                 }
-            });
+                
+                // Handle successful connection
+                window.walletAddress = accounts[0];
+                window.walletConnected = true;
+                this.updateWalletUI(true);
+                setTimeout(() => {
+                    window.showNotification('Wallet connected successfully!', 'success');
+                }, 0);
+                
+                // Dispatch wallet connected event
+                document.dispatchEvent(new CustomEvent('walletConnected', {
+                    detail: { address: window.walletAddress }
+                }));
+
+                // Listen for account changes
+                provider.on('accountsChanged', (accounts) => {
+                    if (accounts.length === 0) {
+                        this.disconnectWallet();
+                    } else {
+                        window.walletAddress = accounts[0];
+                        this.updateWalletUI(true);
+                    }
+                });
+
+            } catch (error) {
+                if (error.code === 4001) {
+                    // User rejected the connection
+                    setTimeout(() => {
+                        window.showNotification('Wallet connection was rejected by user', 'info');
+                    }, 0);
+                } else {
+                    console.error('MetaMask connection error:', error);
+                    setTimeout(() => {
+                        window.showNotification('Failed to connect wallet: ' + error.message, 'error');
+                    }, 0);
+                }
+            }
 
         } catch (error) {
             console.error('MetaMask connection error:', error);
