@@ -191,7 +191,41 @@
         </div>
     </section>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" type="application/javascript"></script>
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-header">
+            <i class="fas fa-robot"></i>
+            <span>AI Assistant</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-message bot">
+                Hello! I'm your AI assistant. How can I help you with token deployment today? 🤖
+            </div>
+        </div>
+        <div class="chat-suggestions">
+            <span class="chat-suggestion">Deploy new token</span>
+            <span class="chat-suggestion">Token features</span>
+            <span class="chat-suggestion">Security check</span>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" placeholder="Type your message...">
+            <button class="chat-send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Primary ethers.js source -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <!-- Fallback ethers.js source -->
+    <script>
+        if (!window.ethers) {
+            console.log('Primary ethers.js failed to load, trying fallback...');
+            const fallbackScript = document.createElement('script');
+            fallbackScript.src = 'https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js';
+            document.body.appendChild(fallbackScript);
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html> 
