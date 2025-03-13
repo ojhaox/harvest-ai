@@ -188,7 +188,11 @@ chatSuggestions.forEach(suggestion => {
 async function updateMarketStats() {
     try {
         // Get ETH Price (using CoinGecko API)
-        const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+        const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
         const priceData = await priceResponse.json();
         
         if (priceData.ethereum) {
@@ -197,24 +201,41 @@ async function updateMarketStats() {
             document.getElementById('eth-price').textContent = 'Loading...';
         }
 
-        // Get Gas Prices (using public Owlracle API)
-        const gasResponse = await fetch('https://api.owlracle.info/v3/eth/gas');
+        // Get Gas Prices (using public Etherscan API without key)
+        const gasResponse = await fetch('https://api.etherscan.io/api?module=gastracker&action=gasoracle', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
         const gasData = await gasResponse.json();
         
-        if (gasData && gasData.speeds) {
-            document.getElementById('gas-low').textContent = `${Math.round(gasData.speeds[0].gasPrice)} Gwei`;
-            document.getElementById('gas-avg').textContent = `${Math.round(gasData.speeds[1].gasPrice)} Gwei`;
-            document.getElementById('gas-high').textContent = `${Math.round(gasData.speeds[2].gasPrice)} Gwei`;
+        if (gasData && gasData.result) {
+            document.getElementById('gas-low').textContent = `${gasData.result.SafeGasPrice} Gwei`;
+            document.getElementById('gas-avg').textContent = `${gasData.result.ProposeGasPrice} Gwei`;
+            document.getElementById('gas-high').textContent = `${gasData.result.FastGasPrice} Gwei`;
         } else {
             document.getElementById('gas-low').textContent = 'Loading...';
             document.getElementById('gas-avg').textContent = 'Loading...';
             document.getElementById('gas-high').textContent = 'Loading...';
         }
 
-        // Get Block Number (using public Cloudflare endpoint)
-        const provider = new ethers.providers.JsonRpcProvider('https://cloudflare-eth.com');
-        const blockNumber = await provider.getBlockNumber();
-        if (blockNumber) {
+        // Get Block Number (using public node)
+        const blockResponse = await fetch('https://eth.llamarpc.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'eth_blockNumber',
+                params: [],
+                id: 1
+            })
+        });
+        const blockData = await blockResponse.json();
+        
+        if (blockData && blockData.result) {
+            const blockNumber = parseInt(blockData.result, 16);
             document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
         } else {
             document.getElementById('block-number').textContent = 'Loading...';
@@ -231,9 +252,9 @@ async function updateMarketStats() {
     }
 }
 
-// Update market stats every 10 seconds
+// Update market stats every 15 seconds
 updateMarketStats();
-setInterval(updateMarketStats, 10000);
+setInterval(updateMarketStats, 15000);
 
 // Add loading animation to market stats
 const marketCards = document.querySelectorAll('.market-card');
