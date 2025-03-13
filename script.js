@@ -187,38 +187,67 @@ chatSuggestions.forEach(suggestion => {
 // Market Statistics Updates
 async function updateMarketStats() {
     try {
-        // Get ETH Gas Prices (using public API)
-        const gasResponse = await fetch('https://api.blocknative.com/gasprices/blockprices');
-        const gasData = await gasResponse.json();
-        
-        if (gasData.blockPrices) {
-            const estimatedPrices = gasData.blockPrices[0].estimatedPrices;
-            document.getElementById('gas-low').textContent = `${Math.round(estimatedPrices[2].price)} Gwei`;
-            document.getElementById('gas-avg').textContent = `${Math.round(estimatedPrices[1].price)} Gwei`;
-            document.getElementById('gas-high').textContent = `${Math.round(estimatedPrices[0].price)} Gwei`;
-        }
-
         // Get ETH Price (using CoinGecko API)
         const priceResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
         const priceData = await priceResponse.json();
         
         if (priceData.ethereum) {
             document.getElementById('eth-price').textContent = `$${priceData.ethereum.usd.toLocaleString()}`;
+        } else {
+            document.getElementById('eth-price').textContent = 'Loading...';
         }
 
-        // Get Latest Block Number (using public Infura endpoint)
-        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
+        // Get Gas Prices (using public Owlracle API)
+        const gasResponse = await fetch('https://api.owlracle.info/v3/eth/gas');
+        const gasData = await gasResponse.json();
+        
+        if (gasData && gasData.speeds) {
+            document.getElementById('gas-low').textContent = `${Math.round(gasData.speeds[0].gasPrice)} Gwei`;
+            document.getElementById('gas-avg').textContent = `${Math.round(gasData.speeds[1].gasPrice)} Gwei`;
+            document.getElementById('gas-high').textContent = `${Math.round(gasData.speeds[2].gasPrice)} Gwei`;
+        } else {
+            document.getElementById('gas-low').textContent = 'Loading...';
+            document.getElementById('gas-avg').textContent = 'Loading...';
+            document.getElementById('gas-high').textContent = 'Loading...';
+        }
+
+        // Get Block Number (using public Cloudflare endpoint)
+        const provider = new ethers.providers.JsonRpcProvider('https://cloudflare-eth.com');
         const blockNumber = await provider.getBlockNumber();
-        document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
+        if (blockNumber) {
+            document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
+        } else {
+            document.getElementById('block-number').textContent = 'Loading...';
+        }
 
     } catch (error) {
         console.error('Error updating market stats:', error);
+        // Set fallback UI for errors
+        document.getElementById('eth-price').textContent = 'Loading...';
+        document.getElementById('gas-low').textContent = 'Loading...';
+        document.getElementById('gas-avg').textContent = 'Loading...';
+        document.getElementById('gas-high').textContent = 'Loading...';
+        document.getElementById('block-number').textContent = 'Loading...';
     }
 }
 
-// Update market stats every 30 seconds
+// Update market stats every 10 seconds
 updateMarketStats();
-setInterval(updateMarketStats, 30000);
+setInterval(updateMarketStats, 10000);
+
+// Add loading animation to market stats
+const marketCards = document.querySelectorAll('.market-card');
+marketCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-5px)';
+        card.style.boxShadow = 'var(--thunder-glow)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = 'var(--glow)';
+    });
+});
 
 // Feature Tags Animation
 const featureTags = document.querySelectorAll('.feature-tag');
