@@ -3,6 +3,13 @@ let walletAddress = null;
 let solanaConnection = null;
 let connectionInterval = null;
 
+// List of public RPC endpoints
+const RPC_ENDPOINTS = [
+    'https://api.devnet.solana.com',  // Devnet for testing
+    'https://solana-api.projectserum.com',  // Project Serum public endpoint
+    'https://rpc.ankr.com/solana'  // Ankr public endpoint
+];
+
 // Initialize Solana connection
 async function initializeSolana() {
     try {
@@ -12,12 +19,26 @@ async function initializeSolana() {
             return;
         }
 
-        // Initialize connection using the correct constructor
-        solanaConnection = new window.solanaWeb3.Connection(
-            "https://api.mainnet-beta.solana.com",
-            'confirmed'
-        );
-        console.log("✅ Solana connection initialized");
+        // Try connecting to each endpoint until one works
+        for (const endpoint of RPC_ENDPOINTS) {
+            try {
+                solanaConnection = new window.solanaWeb3.Connection(
+                    endpoint,
+                    'confirmed'
+                );
+                // Test the connection
+                await solanaConnection.getVersion();
+                console.log("✅ Solana connection initialized using:", endpoint);
+                break;
+            } catch (err) {
+                console.warn(`Failed to connect to ${endpoint}, trying next endpoint...`);
+                continue;
+            }
+        }
+
+        if (!solanaConnection) {
+            throw new Error("Unable to connect to any Solana RPC endpoint");
+        }
 
         // Check if already connected
         if (window.solana.isConnected) {
