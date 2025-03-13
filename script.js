@@ -21,6 +21,102 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeCTAButton();
     initializeWalletConnection();
     initializeChat();
+
+    // Custom cursor elements
+    const cursor = document.querySelector('.custom-cursor');
+    const cursorDot = document.querySelector('.cursor-dot');
+    
+    // Set cursor styles
+    if (cursor) {
+        cursor.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';  // Semi-transparent black
+        cursor.style.border = '1px solid rgba(0, 0, 0, 0.5)';  // Darker black border
+    }
+    
+    if (cursorDot) {
+        cursorDot.style.backgroundColor = '#000000';  // Solid black for the dot
+    }
+
+    // Track mouse position
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let dotX = 0;
+    let dotY = 0;
+
+    // Mouse move handler
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Add hover trail effect
+        createTrailEffect(e.clientX, e.clientY);
+    });
+
+    // Smooth cursor animation
+    function updateCursor() {
+        if (cursor && cursorDot) {
+            // Smooth cursor following
+            const deltaX = mouseX - cursorX;
+            const deltaY = mouseY - cursorY;
+            cursorX += deltaX * 0.2;
+            cursorY += deltaY * 0.2;
+            cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) translate(-50%, -50%)`;
+
+            // Faster dot following
+            const dotDeltaX = mouseX - dotX;
+            const dotDeltaY = mouseY - dotY;
+            dotX += dotDeltaX * 0.5;
+            dotY += dotDeltaY * 0.5;
+            cursorDot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
+        }
+        requestAnimationFrame(updateCursor);
+    }
+    updateCursor();
+
+    // Add hover effects for interactive elements
+    const interactiveElements = document.querySelectorAll(`
+        .wallet-button, .cta-button, .feature-card,
+        .market-card, .step-card, .about-card,
+        .social-icon, .chat-widget, .generate-logo-btn,
+        .deploy-btn, .estimate-btn, a, button, input,
+        .toggle, .chat-suggestion
+    `);
+
+    interactiveElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            if (cursor && cursorDot) {
+                cursor.style.transform = 'scale(1.5)';
+                cursorDot.style.transform = 'scale(0.5)';
+            }
+        });
+
+        element.addEventListener('mouseleave', () => {
+            if (cursor && cursorDot) {
+                cursor.style.transform = 'scale(1)';
+                cursorDot.style.transform = 'scale(1)';
+            }
+        });
+    });
+
+    // Trail effect
+    function createTrailEffect(x, y) {
+        const trail = document.createElement('div');
+        trail.className = 'tech-trail';
+        trail.style.left = x + 'px';
+        trail.style.top = y + 'px';
+        trail.style.position = 'fixed';
+        trail.style.pointerEvents = 'none';
+        trail.style.width = '4px';
+        trail.style.height = '4px';
+        trail.style.backgroundColor = '#000000';  // Changed to black
+        trail.style.borderRadius = '50%';
+        trail.style.opacity = '0.3';  // Reduced opacity for better visibility
+        trail.style.animation = 'techTrailFade 0.5s ease-out forwards';
+        
+        document.body.appendChild(trail);
+        setTimeout(() => trail.remove(), 500);
+    }
 });
 
 // Navbar initialization
