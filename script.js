@@ -187,14 +187,15 @@ chatSuggestions.forEach(suggestion => {
 // Market Statistics Updates
 async function updateMarketStats() {
     try {
-        // Get ETH Gas Prices (using ETH Gas Station API)
-        const gasResponse = await fetch('https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey=YOUR_ETHERSCAN_API_KEY');
+        // Get ETH Gas Prices (using public API)
+        const gasResponse = await fetch('https://api.blocknative.com/gasprices/blockprices');
         const gasData = await gasResponse.json();
         
-        if (gasData.status === '1') {
-            document.getElementById('gas-low').textContent = `${gasData.result.SafeLow} Gwei`;
-            document.getElementById('gas-avg').textContent = `${gasData.result.ProposeGasPrice} Gwei`;
-            document.getElementById('gas-high').textContent = `${gasData.result.FastGasPrice} Gwei`;
+        if (gasData.blockPrices) {
+            const estimatedPrices = gasData.blockPrices[0].estimatedPrices;
+            document.getElementById('gas-low').textContent = `${Math.round(estimatedPrices[2].price)} Gwei`;
+            document.getElementById('gas-avg').textContent = `${Math.round(estimatedPrices[1].price)} Gwei`;
+            document.getElementById('gas-high').textContent = `${Math.round(estimatedPrices[0].price)} Gwei`;
         }
 
         // Get ETH Price (using CoinGecko API)
@@ -205,14 +206,11 @@ async function updateMarketStats() {
             document.getElementById('eth-price').textContent = `$${priceData.ethereum.usd.toLocaleString()}`;
         }
 
-        // Get Latest Block Number (using Etherscan API)
-        const blockResponse = await fetch('https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=YOUR_ETHERSCAN_API_KEY');
-        const blockData = await blockResponse.json();
-        
-        if (blockData.result) {
-            const blockNumber = parseInt(blockData.result, 16);
-            document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
-        }
+        // Get Latest Block Number (using public Infura endpoint)
+        const provider = new ethers.providers.JsonRpcProvider('https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161');
+        const blockNumber = await provider.getBlockNumber();
+        document.getElementById('block-number').textContent = `#${blockNumber.toLocaleString()}`;
+
     } catch (error) {
         console.error('Error updating market stats:', error);
     }
